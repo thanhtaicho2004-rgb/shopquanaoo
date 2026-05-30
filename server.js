@@ -2,10 +2,18 @@ const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
+const path = require("path");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+// --- GỘP GIAO DIỆN FRONTEND VÀO SERVER ---
+// Cho phép server đọc các file css, js, hình ảnh trong thư mục frontend
+app.use(express.static(path.join(__dirname, "frontend")));
+
+// Khi khách hàng vào đường link chính, tự động mở trang chủ index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "pages", "index.html"));
+});
 
 // --- 1. KẾT NỐI DATABASE ---
 const db = mysql.createConnection({
