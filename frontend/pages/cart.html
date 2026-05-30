@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ Hàng - Vintage Vibe</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      /* --- 1. CSS CHUNG --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: #f8f9fa;
+        padding-top: 80px;
+      }
+
+      /* Header */
+      .header {
+        background: #000;
+        padding: 15px 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      .header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+      }
+      .logo a {
+        color: #ff4757;
+        font-size: 30px;
+        font-weight: 900;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .menu-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .menu-link {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: 0.3s;
+      }
+      .menu-link:hover {
+        color: #ff4757;
+      }
+
+      /* Icon Giỏ hàng trên Header */
+      .cart-btn-header {
+        position: relative;
+        color: white;
+        font-size: 22px;
+        text-decoration: none;
+      }
+      .cart-btn-header:hover {
+        color: #ff4757;
+      }
+      .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff4757;
+        color: white;
+        font-size: 11px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid #000;
+      }
+
+      /* Footer */
+      .footer {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 20px 0;
+        margin-top: auto;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      /* --- 2. GIAO DIỆN GIỎ HÀNG --- */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 30px;
+        border-left: 5px solid #ff4757;
+        padding-left: 15px;
+      }
+
+      .cart-layout {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+      .cart-items {
+        flex: 2;
+        min-width: 300px;
+      }
+      .cart-summary {
+        flex: 1;
+        min-width: 250px;
+      }
+
+      /* Bảng sản phẩm */
+      .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+      .cart-table th {
+        background: #f1f2f6;
+        color: #555;
+        font-weight: 600;
+        padding: 15px;
+        text-align: left;
+        font-size: 14px;
+      }
+      .cart-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+      }
+
+      .product-col {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .product-col img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+        border: 1px solid #eee;
+      }
+      .product-name {
+        font-weight: 700;
+        color: #333;
+        font-size: 15px;
+      }
+
+      /* Nút tăng giảm số lượng */
+      .qty-control {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: fit-content;
+      }
+      .qty-btn {
+        background: none;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #555;
+      }
+      .qty-btn:hover {
+        background: #eee;
+      }
+      .qty-input {
+        width: 40px;
+        text-align: center;
+        border: none;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        outline: none;
+        font-weight: bold;
+      }
+
+      .price {
+        color: #ff4757;
+        font-weight: bold;
+      }
+      .btn-remove {
+        color: #ccc;
+        cursor: pointer;
+        font-size: 18px;
+        transition: 0.2s;
+        border: none;
+        background: none;
+      }
+      .btn-remove:hover {
+        color: #e74c3c;
+        transform: scale(1.1);
+      }
+
+      /* Khung Tổng tiền */
+      .summary-box {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 100px;
+      }
+      .summary-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        color: #555;
+        font-size: 15px;
+      }
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+        font-size: 20px;
+        font-weight: 800;
+        color: #333;
+      }
+
+      .btn-checkout {
+        width: 100%;
+        background: #ff4757;
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: 0.3s;
+      }
+      .btn-checkout:hover {
+        background: #ff2e40;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+      }
+
+      .empty-cart {
+        text-align: center;
+        padding: 50px;
+        background: white;
+        border-radius: 10px;
+      }
+      .btn-back {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 25px;
+        background: #333;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .cart-layout {
+          flex-direction: column;
+        }
+        .cart-table thead {
+          display: none;
+        }
+        .cart-table tr {
+          display: block;
+          margin-bottom: 15px;
+          border: 1px solid #eee;
+          border-radius: 10px;
+          padding: 15px;
+        }
+        .cart-table td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border: none;
+          padding: 5px 0;
+        }
+        .product-col {
+          margin-bottom: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo"><a href="index.html">VINTAGE VIBE</a></div>
+        <div class="menu-right">
+          <a href="index.html" class="menu-link">Trang chủ</a>
+          <a href="login.html" class="menu-link" id="authLink">Đăng nhập</a>
+          <a
+            href="cart.html"
+            class="cart-btn"
+            style="
+              position: relative;
+              font-size: 26px;
+              color: white;
+              text-decoration: none;
+              margin-left: 10px;
+            "
+          >
+            🛒
+            <span
+              class="cart-count"
+              id="cartCountHeader"
+              style="
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: #ff4757;
+                color: white;
+                font-size: 11px;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                border: 2px solid #000;
+              "
+              >0</span
+            >
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1 class="page-title">Giỏ hàng của bạn</h1>
+
+      <div id="cartContent" class="cart-layout">
+        <div class="loading">Đang tải giỏ hàng...</div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 Vintage Vibe. All rights reserved.</p>
+    </footer>
+
+    <script>
+      // 1. Hàm định dạng tiền tệ
+      const formatCurrency = (amount) => {
+        return new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(amount);
+      };
+
+      // 2. Tải và Hiển thị Giỏ hàng
+      function loadCart() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const container = document.getElementById("cartContent");
+
+        // --- GỌI HÀM CẬP NHẬT SỐ LƯỢNG TRÊN HEADER ---
+        updateHeaderBadge(cart);
+
+        // Nếu giỏ trống
+        if (cart.length === 0) {
+          container.innerHTML = `
+            <div class="empty-cart" style="width: 100%">
+              <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="100" style="opacity: 0.5; margin-bottom: 20px">
+              <h3>Giỏ hàng đang trống!</h3>
+              <p style="color: #777">Có vẻ bạn chưa chọn được món đồ nào ưng ý.</p>
+              <a href="index.html" class="btn-back">Quay lại mua sắm</a>
+            </div>
+          `;
+          return;
+        }
+
+        // Tính tổng tiền
+        const total = cart.reduce(
+          (sum, item) => sum + item.price * item.qty,
+          0
+        );
+
+        // Tạo HTML danh sách sản phẩm
+        let itemsHtml = cart
+          .map(
+            (item) => `
+          <tr>
+            <td>
+              <div class="product-col">
+                <img src="${
+                  item.image
+                }" onerror="this.src='https://via.placeholder.com/80'">
+                <div>
+                  <div class="product-name">${item.name}</div>
+                  <div style="font-size: 13px; color: #888">Size: F</div>
+                </div>
+              </div>
+            </td>
+            <td class="price">${formatCurrency(item.price)}</td>
+            <td>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(${
+                  item.id
+                }, -1)">-</button>
+                <input type="text" class="qty-input" value="${
+                  item.qty
+                }" readonly>
+                <button class="qty-btn" onclick="updateQty(${
+                  item.id
+                }, 1)">+</button>
+              </div>
+            </td>
+            <td style="font-weight: bold">${formatCurrency(
+              item.price * item.qty
+            )}</td>
+            <td style="text-align: right">
+              <button class="btn-remove" onclick="removeItem(${item.id})">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `
+          )
+          .join("");
+
+        // Render toàn bộ giao diện
+        container.innerHTML = `
+          <div class="cart-items">
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th style="width: 40%">Sản phẩm</th>
+                  <th>Đơn giá</th>
+                  <th>Số lượng</th>
+                  <th>Thành tiền</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>${itemsHtml}</tbody>
+            </table>
+          </div>
+
+          <div class="cart-summary">
+            <div class="summary-box">
+              <div class="summary-title">Thông tin đơn hàng</div>
+              <div class="summary-row"><span>Tạm tính:</span><span>${formatCurrency(
+                total
+              )}</span></div>
+              <div class="summary-row"><span>Phí vận chuyển:</span><span style="color: #2ecc71">Miễn phí</span></div>
+              <div class="total-row"><span>Tổng cộng:</span><span style="color: #ff4757">${formatCurrency(
+                total
+              )}</span></div>
+              
+              <button class="btn-checkout" onclick="goToCheckout()">TIẾN HÀNH THANH TOÁN</button>
+              <a href="index.html" style="display: block; text-align: center; margin-top: 15px; color: #555; text-decoration: none; font-size: 14px;">
+                <i class="fa-solid fa-arrow-left"></i> Tiếp tục mua hàng
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      // --- 3. HÀM MỚI: CẬP NHẬT ICON GIỎ HÀNG (SỬA LỖI CỦA BẠN TẠI ĐÂY) ---
+      function updateHeaderBadge(cart) {
+        // CŨ: cart.reduce((s, i) => s + i.qty, 0); -> Sẽ bị cộng dồn số lượng
+        // MỚI: cart.length -> Chỉ đếm số dòng sản phẩm (Unique)
+        const count = cart.length;
+
+        const badge = document.getElementById("cartCountHeader");
+        if (badge) badge.innerText = count;
+      }
+
+      // 4. Chức năng Tăng/Giảm số lượng
+      function updateQty(id, change) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const item = cart.find((x) => x.id === id);
+
+        if (item) {
+          item.qty += change;
+          if (item.qty <= 0) {
+            if (confirm("Bạn muốn xóa sản phẩm này khỏi giỏ?")) {
+              cart = cart.filter((x) => x.id !== id);
+            } else {
+              item.qty = 1;
+            }
+          }
+          localStorage.setItem("cart", JSON.stringify(cart));
+          loadCart(); // Khi load lại, nó sẽ gọi updateHeaderBadge(cart.length) -> Số không bị nhảy
+        }
+      }
+
+      // 5. Chức năng Xóa sản phẩm
+      function removeItem(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa không?")) {
+          let cart = JSON.parse(localStorage.getItem("cart")) || [];
+          cart = cart.filter((x) => x.id !== id);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          loadCart();
+        }
+      }
+
+      // 6. Chuyển sang trang Thanh toán
+      function goToCheckout() {
+        const user = localStorage.getItem("currentUser");
+        if (!user) {
+          if (
+            confirm(
+              "Bạn cần đăng nhập để thanh toán. Đi đến trang đăng nhập ngay?"
+            )
+          ) {
+            window.location.href = "login.html";
+          }
+        } else {
+          window.location.href = "checkout.html";
+        }
+      }
+
+      // Kiểm tra đăng nhập để đổi nút trên Header
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (currentUser) {
+        const authLink = document.getElementById("authLink");
+        if (authLink) {
+          authLink.innerText = "Chào, " + (currentUser.fullname || "User");
+          authLink.href = "#";
+        }
+      }
+
+      // Chạy ngay khi vào trang
+      loadCart();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản lý Đánh giá - Vintage Vibe Admin</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* CSS CHUNG */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+      body {
+        display: flex;
+        min-height: 100vh;
+        background: #f0f2f5;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 260px;
+        background: #1a1a1a;
+        color: white;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+      }
+      .sidebar h2 {
+        color: #ff4757;
+        margin-bottom: 40px;
+        text-align: center;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        color: #aaa;
+        text-decoration: none;
+        margin-bottom: 5px;
+        border-radius: 8px;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+      .menu-item:hover,
+      .menu-item.active {
+        background: #ff4757;
+        color: white;
+        font-weight: 600;
+      }
+      .menu-item i {
+        width: 20px;
+      }
+
+      /* MAIN CONTENT */
+      .main {
+        flex: 1;
+        padding: 30px;
+        margin-left: 260px;
+      }
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      .page-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #333;
+      }
+
+      /* TABLE */
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        vertical-align: top;
+      }
+      th {
+        background: #f8f9fa;
+        color: #555;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* STATUS BADGE */
+      .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      .bg-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .bg-approved {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      /* STAR RATING */
+      .stars {
+        color: #f1c40f;
+      }
+
+      /* BUTTONS */
+      .btn-action {
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        margin-right: 5px;
+        font-size: 12px;
+      }
+      .btn-approve {
+        background: #2ecc71;
+      }
+      .btn-approve:hover {
+        background: #27ae60;
+      }
+      .btn-delete {
+        background: #e74c3c;
+      }
+      .btn-delete:hover {
+        background: #c0392b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>ADMIN VIBE</h2>
+      <a href="admin.html" class="menu-item"
+        ><i class="fa-solid fa-chart-line"></i> Thống kê</a
+      >
+      <a href="admin.html" class="menu-item"
+        ><i class="fa-solid fa-box"></i> Sản phẩm</a
+      >
+      <a href="categories.html" class="menu-item"
+        ><i class="fa-solid fa-layer-group"></i> Danh mục</a
+      >
+      <a href="admin.html" class="menu-item"
+        ><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</a
+      >
+      <a href="reviews.html" class="menu-item active"
+        ><i class="fa-solid fa-comments"></i> Đánh giá</a
+      >
+      <a href="index.html" class="menu-item" style="margin-top: auto"
+        ><i class="fa-solid fa-arrow-left"></i> Về trang chủ</a
+      >
+    </div>
+
+    <div class="main">
+      <div class="header-row">
+        <h1 class="page-title">Quản lý Đánh giá & Bình luận</h1>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Khách hàng</th>
+              <th style="width: 40%">Nội dung</th>
+              <th>Đánh giá</th>
+              <th>Ngày</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="reviewList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      // DATA MẪU (Để bạn test giao diện trước khi có bình luận thật)
+      const SAMPLE_REVIEWS = [
+        {
+          id: 1,
+          productName: "Áo Hoodie Fear Of God",
+          user: "Nguyễn Văn A",
+          content: "Áo đẹp, vải dày dặn, giao hàng nhanh.",
+          rating: 5,
+          date: "2025-01-01",
+          status: "pending",
+        },
+        {
+          id: 2,
+          productName: "Kính Mát Rayban",
+          user: "Trần Thị B",
+          content: "Hàng ổn nhưng hộp hơi móp.",
+          rating: 4,
+          date: "2025-01-02",
+          status: "approved",
+        },
+      ];
+
+      // 1. Tải danh sách đánh giá
+      function loadReviews() {
+        let reviews = JSON.parse(localStorage.getItem("reviews"));
+
+        // Nếu chưa có dữ liệu thật, nạp mẫu vào để test giao diện
+        if (!reviews || reviews.length === 0) {
+          reviews = SAMPLE_REVIEWS;
+          localStorage.setItem("reviews", JSON.stringify(reviews));
+        }
+
+        const tbody = document.getElementById("reviewList");
+
+        if (reviews.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" style="text-align:center; padding: 20px; color:#888">Chưa có đánh giá nào.</td></tr>';
+          return;
+        }
+
+        // Sắp xếp: Mới nhất lên đầu
+        reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        tbody.innerHTML = reviews
+          .map((r) => {
+            // Tạo số sao
+            let starHtml = "";
+            for (let i = 0; i < 5; i++) {
+              starHtml +=
+                i < r.rating
+                  ? '<i class="fa-solid fa-star"></i>'
+                  : '<i class="fa-regular fa-star"></i>';
+            }
+
+            // Badge trạng thái
+            let badge =
+              r.status === "approved"
+                ? '<span class="badge bg-approved">Đã hiện</span>'
+                : '<span class="badge bg-pending">Chờ duyệt</span>';
+
+            // Nút hành động
+            let actions = "";
+            if (r.status === "pending") {
+              actions += `<button class="btn-action btn-approve" onclick="approveReview(${r.id})" title="Duyệt"><i class="fa-solid fa-check"></i></button>`;
+            }
+            actions += `<button class="btn-action btn-delete" onclick="deleteReview(${r.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>`;
+
+            return `
+                    <tr>
+                        <td style="font-weight:600; color:#333">${r.productName}</td>
+                        <td>${r.user}</td>
+                        <td style="font-style:italic; color:#555">"${r.content}"</td>
+                        <td class="stars">${starHtml}</td>
+                        <td>${r.date}</td>
+                        <td>${badge}</td>
+                        <td>${actions}</td>
+                    </tr>
+                `;
+          })
+          .join("");
+      }
+
+      // 2. Chức năng Duyệt
+      function approveReview(id) {
+        let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+        const index = reviews.findIndex((r) => r.id === id);
+        if (index !== -1) {
+          reviews[index].status = "approved";
+          localStorage.setItem("reviews", JSON.stringify(reviews));
+          loadReviews();
+          alert("Đã duyệt bình luận! Nội dung sẽ hiện trên trang sản phẩm.");
+        }
+      }
+
+      // 3. Chức năng Xóa
+      function deleteReview(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa bình luận này?")) {
+          let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+          reviews = reviews.filter((r) => r.id !== id);
+          localStorage.setItem("reviews", JSON.stringify(reviews));
+          loadReviews();
+        }
+      }
+
+      // Chạy ngay
+      loadReviews();
+    </script>
+  </body>
+</html>

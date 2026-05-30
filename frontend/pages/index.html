@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang Chủ - Vintage Vibe</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* --- CSS CƠ BẢN --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: "Segoe UI", sans-serif;
+        background: #f8f9fa;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        padding-top: 80px;
+      }
+      .main-content {
+        flex: 1;
+      }
+
+      /* HEADER */
+      .header {
+        background: #000;
+        padding: 15px 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      .header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+      }
+      .logo a {
+        color: #ff4757;
+        font-size: 30px;
+        font-weight: 900;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* --- THANH TÌM KIẾM SANG TRỌNG (MỚI) --- */
+      .search-box {
+        flex: 1;
+        max-width: 500px; /* Rộng hơn chút cho sang */
+        margin: 0 30px;
+        position: relative;
+      }
+      .search-box input {
+        width: 100%;
+        padding: 15px 60px 15px 25px; /* Padding rộng rãi */
+        border-radius: 50px;
+        border: 2px solid transparent; /* Viền trong suốt để chờ focus */
+        outline: none;
+        font-size: 15px;
+        background: #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+        transition: 0.3s;
+      }
+      .search-box input:focus {
+        border-color: #ff4757; /* Focus hiện viền đỏ */
+        box-shadow: 0 0 20px rgba(255, 71, 87, 0.2); /* Phát sáng nhẹ */
+      }
+
+      .search-btn {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        bottom: 6px; /* Căn chỉnh tự động */
+        width: 45px;
+        border-radius: 50%;
+        border: none;
+        /* MÀU GRADIENT SANG TRỌNG */
+        background: linear-gradient(135deg, #ff4757, #ff6b81);
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4); /* Bóng nút */
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Hiệu ứng nảy */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      .search-btn:hover {
+        transform: scale(1.1) rotate(15deg); /* Phóng to và xoay nhẹ khi hover */
+        box-shadow: 0 8px 20px rgba(255, 71, 87, 0.6);
+      }
+
+      /* User & Cart */
+      .user-panel {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .auth-btn {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        background: #ff4757;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: 0.3s;
+        font-weight: 600;
+      }
+      .auth-btn:hover {
+        background: #ff2e40;
+        transform: translateY(-2px);
+      }
+
+      .cart-btn {
+        position: relative;
+        font-size: 26px;
+        color: white;
+        text-decoration: none;
+        margin-left: 10px;
+        transition: 0.3s;
+      }
+      .cart-btn:hover {
+        transform: scale(1.1);
+        color: #ff4757;
+      }
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff4757;
+        color: white;
+        font-size: 11px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid #000;
+      }
+
+      /* THÔNG BÁO STYLE */
+      .noti-btn {
+        position: relative;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: 0.3s;
+      }
+      .noti-btn:hover {
+        color: #ff4757;
+      }
+      .noti-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #e74c3c;
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 50%;
+        font-weight: bold;
+        display: none;
+      }
+      .noti-dropdown {
+        position: absolute;
+        top: 60px;
+        right: 80px;
+        width: 320px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        display: none;
+        z-index: 1001;
+        animation: slideInTop 0.3s;
+      }
+      @keyframes slideInTop {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .noti-header {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        font-weight: bold;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        color: #333;
+      }
+      .noti-list {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .noti-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 13px;
+        color: #333;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .noti-item:hover {
+        background: #f9f9f9;
+        border-left: 3px solid #ff4757;
+      }
+      .noti-item.unread {
+        background: #fff8e1;
+        border-left: 3px solid #ff4757;
+        font-weight: 600;
+      }
+      .noti-time {
+        display: block;
+        font-size: 11px;
+        color: #999;
+        margin-top: 5px;
+        font-weight: normal;
+      }
+
+      /* BANNER & PRODUCTS */
+      .hero {
+        background: linear-gradient(135deg, #1e272e, #111);
+        color: white;
+        text-align: center;
+        padding: 90px 20px;
+        margin-bottom: 50px;
+      }
+      .hero h1 {
+        font-size: 52px;
+        font-weight: 900;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+      }
+      .hero p {
+        font-size: 20px;
+        margin-bottom: 30px;
+        color: #ccc;
+      }
+      .hero-btn {
+        background: #ff4757;
+        color: white;
+        padding: 15px 50px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 18px;
+        transition: 0.3s;
+        box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4);
+      }
+      .hero-btn:hover {
+        transform: translateY(-3px);
+        background: #ff2e40;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      .section-box {
+        margin-bottom: 70px;
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #e1e1e1;
+        padding-bottom: 15px;
+      }
+      .section-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #2f3542;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge {
+        font-size: 13px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        color: white;
+        vertical-align: middle;
+      }
+      .bg-hot {
+        background: #ff4757;
+      }
+      .bg-sale {
+        background: #e67e22;
+      }
+      .bg-best {
+        background: #3498db;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+      }
+      .card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: 0.3s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+      .sale-sticker {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: #e74c3c;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 13px;
+        z-index: 2;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      }
+      .card img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        transition: 0.5s;
+      }
+      .card:hover img {
+        transform: scale(1.05);
+      }
+      .card-body {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .p-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+        height: 44px;
+        line-height: 22px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .price-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .price-new {
+        color: #ff4757;
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .price-old {
+        color: #aaa;
+        text-decoration: line-through;
+        font-size: 14px;
+      }
+      .btn-add {
+        width: 100%;
+        padding: 12px;
+        background: #2f3542;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: auto;
+        transition: 0.2s;
+      }
+      .btn-add:hover {
+        background: #ff4757;
+      }
+
+      /* FOOTER */
+      .footer {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 60px 0 0;
+        margin-top: auto;
+      }
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        padding: 0 30px 40px;
+      }
+      .footer-col h3 {
+        color: #ff4757;
+        font-size: 18px;
+        margin-bottom: 20px;
+        border-left: 3px solid #ff4757;
+        padding-left: 10px;
+      }
+      .footer-col p,
+      .footer-col a {
+        color: #ccc;
+        font-size: 14px;
+        line-height: 1.8;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 8px;
+        transition: 0.3s;
+      }
+      .footer-col a:hover {
+        color: #ff4757;
+        padding-left: 5px;
+      }
+      .social-icons a {
+        display: inline-block;
+        margin-right: 15px;
+        font-size: 24px;
+      }
+      .footer-bottom {
+        text-align: center;
+        padding: 20px;
+        background: #111;
+        color: #888;
+        font-size: 14px;
+        border-top: 1px solid #333;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 500px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .header-inner {
+          flex-direction: column;
+          gap: 15px;
+        }
+        .search-box {
+          width: 100%;
+          margin: 0;
+        }
+      }
+      .loading {
+        text-align: center;
+        color: #888;
+        font-size: 18px;
+        padding: 30px;
+        grid-column: span 4;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo"><a href="index.html">VINTAGE VIBE</a></div>
+
+        <div class="search-box">
+          <input
+            type="text"
+            id="search"
+            placeholder="Bạn muốn tìm gì hôm nay?"
+          />
+          <button class="search-btn" id="btnSearch">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+
+        <div class="user-panel">
+          <div class="noti-btn" id="notiBtn" onclick="toggleNoti()">
+            <i class="fa-solid fa-bell"></i>
+            <span class="noti-badge" id="notiBadge">0</span>
+
+            <div class="noti-dropdown" id="notiDropdown">
+              <div class="noti-header">
+                <span>Thông báo mới</span>
+                <span
+                  style="font-size: 11px; cursor: pointer; color: #ff4757"
+                  onclick="markAllRead(event)"
+                  >Đã xem hết</span
+                >
+              </div>
+              <div class="noti-list" id="notiList">
+                <div
+                  style="
+                    padding: 20px;
+                    text-align: center;
+                    color: #999;
+                    font-size: 13px;
+                  "
+                >
+                  Không có thông báo nào
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="userNav">
+            <a href="login.html" class="auth-btn">Đăng nhập</a>
+            <a href="register.html" class="auth-btn" style="margin-left: 5px"
+              >Đăng ký</a
+            >
+          </div>
+          <a href="cart.html" class="cart-btn"
+            >🛒 <span class="cart-count" id="cartCount">0</span></a
+          >
+        </div>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div class="hero">
+        <h1>PHONG CÁCH KHÔNG ĐỤNG HÀNG</h1>
+        <p>Hàng hiệu Secondhand & Hypebeast tuyển chọn 2025</p>
+        <a href="#hot" class="hero-btn">KHÁM PHÁ NGAY</a>
+      </div>
+      <div class="container">
+        <div class="section-box" id="hot">
+          <div class="section-header">
+            <h2 class="section-title">
+              🔥 SẢN PHẨM MỚI <span class="badge bg-hot">NEW ARRIVALS</span>
+            </h2>
+          </div>
+          <div class="grid" id="gridHot">
+            <div class="loading">Đang tải...</div>
+          </div>
+        </div>
+        <div class="section-box">
+          <div class="section-header">
+            <h2 class="section-title" style="color: #e74c3c">
+              ⚡ FLASH SALE <span class="badge bg-sale">-20% OFF</span>
+            </h2>
+          </div>
+          <div class="grid" id="gridSale">
+            <div class="loading">Đang tải...</div>
+          </div>
+        </div>
+        <div class="section-box">
+          <div class="section-header">
+            <h2 class="section-title">
+              🏆 BÁN CHẠY NHẤT <span class="badge bg-best">TOP SELLER</span>
+            </h2>
+          </div>
+          <div class="grid" id="gridBest">
+            <div class="loading">Đang tải...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-col">
+          <h3>VỀ CHÚNG TÔI</h3>
+          <p>
+            Vintage Vibe chuyên cung cấp quần áo secondhand độc lạ, chất lượng
+            cao.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h3>LIÊN KẾT</h3>
+          <a href="index.html">Trang chủ</a><a href="#hot">Sản phẩm</a
+          ><a href="cart.html">Giỏ hàng</a>
+        </div>
+        <div class="footer-col">
+          <h3>LIÊN HỆ</h3>
+          <p>📍 180 Cao Lỗ , Quận 8 , TP.HCM</p>
+          <p>📧 contact@vintagevibe.vn</p>
+          <p>📞 0909 123 456</p>
+        </div>
+        <div class="footer-col">
+          <h3>THEO DÕI</h3>
+          <div class="social-icons">
+            <a href="#"><i class="fa-brands fa-facebook"></i></a
+            ><a href="#"><i class="fa-brands fa-instagram"></i></a
+            ><a href="#"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Vintage Vibe. Design by <strong>Admin</strong></p>
+      </div>
+    </footer>
+
+    <script>
+      // 1. UTILS
+      const formatCurrency = (amount) =>
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(amount);
+      function showToast(msg, type = "success") {
+        let toastBox = document.getElementById("toastBox");
+        if (!toastBox) {
+          toastBox = document.createElement("div");
+          toastBox.id = "toastBox";
+          toastBox.style.cssText =
+            "position:fixed; bottom:30px; right:30px; z-index:9999; display:flex; flex-direction:column; gap:10px;";
+          document.body.appendChild(toastBox);
+        }
+        const toast = document.createElement("div");
+        const color = type === "success" ? "#2ecc71" : "red";
+        toast.style.cssText = `background:white; padding:15px 25px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2); border-left:5px solid ${color}; display:flex; align-items:center; gap:10px; animation: slideIn 0.5s, fadeOut 0.5s 2.5s forwards; min-width:300px;`;
+        toast.innerHTML = `<i class="fa-solid fa-check-circle" style="color:${color}"></i> <span style="font-weight:600; color:#333">${msg}</span>`;
+        toastBox.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      // 2. LOAD SẢN PHẨM
+      function loadProducts() {
+        const products = JSON.parse(localStorage.getItem("products")) || [];
+        if (products.length === 0) {
+          document.getElementById("gridHot").innerHTML =
+            "<p style='grid-column: span 4; text-align:center'>Chưa có sản phẩm.</p>";
+          document.getElementById("gridSale").innerHTML = "";
+          document.getElementById("gridBest").innerHTML = "";
+          return;
+        }
+        const newItems = products.filter(
+          (p) => p.category === "new" || !p.category,
+        );
+        const saleItems = products.filter((p) => p.category === "sale");
+        const bestItems = products.filter((p) => p.category === "best");
+        renderProducts("gridHot", newItems);
+        renderProducts("gridSale", saleItems);
+        renderProducts("gridBest", bestItems);
+      }
+
+      function renderProducts(elementId, items) {
+        const container = document.getElementById(elementId);
+        if (!items || items.length === 0) {
+          container.innerHTML =
+            "<p style='grid-column:span 4; text-align:center; color:#999'>Trống.</p>";
+          return;
+        }
+        container.innerHTML = items
+          .map((p) => {
+            const originalPrice = p.original_price || p.price;
+            const isSale = Number(originalPrice) > Number(p.price);
+            const priceHtml = isSale
+              ? `<span class="price-new">${formatCurrency(
+                  p.price,
+                )}</span> <span class="price-old">${formatCurrency(
+                  originalPrice,
+                )}</span>`
+              : `<span class="price-new">${formatCurrency(p.price)}</span>`;
+            const sticker = isSale
+              ? `<div class="sale-sticker">SALE</div>`
+              : "";
+            return `<div class="card">${sticker}<a href="product-detail.html?id=${p.id}"><img src="${p.image}" loading="lazy" onerror="this.src='https://via.placeholder.com/300'"></a><div class="card-body"><div class="p-name">${p.name}</div><div class="price-row">${priceHtml}</div><button class="btn-add" onclick="addToCart(${p.id})">THÊM VÀO GIỎ</button></div></div>`;
+          })
+          .join("");
+      }
+
+      // 3. GIỎ HÀNG
+      function addToCart(id) {
+        const products = JSON.parse(localStorage.getItem("products")) || [];
+        const product = products.find((p) => p.id === id);
+        if (product) {
+          let cart = JSON.parse(localStorage.getItem("cart")) || [];
+          let item = cart.find((x) => x.id === id);
+          if (item) item.qty++;
+          else cart.push({ ...product, qty: 1 });
+          localStorage.setItem("cart", JSON.stringify(cart));
+          updateCartCount();
+          showToast(`Đã thêm: ${product.name}`);
+        }
+      }
+      function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // SỬA LỖI TẠI ĐÂY: Dùng .length để đếm số dòng sản phẩm (2 món = số 2)
+        // Thay vì dùng .reduce (cộng tổng số lượng)
+        const count = cart.length;
+
+        const cartCountEl = document.getElementById("cartCount");
+        if (cartCountEl) {
+          cartCountEl.innerText = count;
+        }
+      }
+
+      // 4. TÌM KIẾM
+      function performSearch(keyword) {
+        const q = keyword.toLowerCase();
+        const cards = document.querySelectorAll(".card");
+        let found = false;
+        cards.forEach((c) => {
+          const name = c.querySelector(".p-name").innerText.toLowerCase();
+          if (name.includes(q)) {
+            c.parentElement.style.display = "block";
+            c.style.display = "flex";
+            found = true;
+          } else {
+            c.style.display = "none";
+          }
+        });
+        if (keyword && found)
+          document.getElementById("hot").scrollIntoView({ behavior: "smooth" });
+      }
+      document.getElementById("btnSearch").onclick = () =>
+        performSearch(document.getElementById("search").value);
+      window.addEventListener("load", () => {
+        const q = new URLSearchParams(window.location.search).get("q");
+        if (q) {
+          document.getElementById("search").value = q;
+          setTimeout(() => performSearch(q), 500);
+        }
+      });
+
+      // 5. USER & THÔNG BÁO (NOTIFICATION)
+      function checkLogin() {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userNav = document.getElementById("userNav");
+
+        if (user) {
+          const name = user.fullname || user.username;
+          userNav.innerHTML = `<a href="profile.html" style="color:#333; text-decoration:none; font-size:14px; margin-right:15px; font-weight:bold">Chào, <span style="color:#ff4757">${name}</span></a><a href="#" onclick="logout()" class="auth-btn" style="background:#333">Đăng xuất</a>`;
+          document.getElementById("notiBtn").style.display = "block";
+          checkNotifications(user.fullname);
+        } else {
+          document.getElementById("notiBtn").style.display = "none";
+        }
+      }
+
+      function logout() {
+        if (confirm("Đăng xuất?")) {
+          localStorage.removeItem("currentUser");
+          window.location.reload();
+        }
+      }
+
+      function checkNotifications(userName) {
+        let notifs = JSON.parse(localStorage.getItem("notifications")) || [];
+        const myNotifs = notifs.filter(
+          (n) => n.to && n.to.toLowerCase() === userName.toLowerCase(),
+        );
+        const unreadCount = myNotifs.filter((n) => !n.isRead).length;
+        const badge = document.getElementById("notiBadge");
+        if (unreadCount > 0) {
+          badge.innerText = unreadCount;
+          badge.style.display = "block";
+        } else {
+          badge.style.display = "none";
+        }
+
+        const list = document.getElementById("notiList");
+        if (myNotifs.length === 0)
+          list.innerHTML =
+            '<div style="padding:20px; text-align:center; color:#999; font-size:13px">Không có thông báo nào</div>';
+        else {
+          myNotifs.sort((a, b) => b.id - a.id);
+          list.innerHTML = myNotifs
+            .map(
+              (n) =>
+                `<div class="noti-item ${
+                  n.isRead ? "" : "unread"
+                }" onclick="window.location.href='profile.html'"><div>${
+                  n.message
+                }</div><span class="noti-time">${n.time}</span></div>`,
+            )
+            .join("");
+        }
+      }
+      function toggleNoti() {
+        const dd = document.getElementById("notiDropdown");
+        dd.style.display = dd.style.display === "block" ? "none" : "block";
+      }
+      function markAllRead(e) {
+        e.stopPropagation();
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        if (!user) return;
+        let notifs = JSON.parse(localStorage.getItem("notifications")) || [];
+        notifs.forEach((n) => {
+          if (n.to && n.to.toLowerCase() === user.fullname.toLowerCase())
+            n.isRead = true;
+        });
+        localStorage.setItem("notifications", JSON.stringify(notifs));
+        checkNotifications(user.fullname);
+      }
+
+      loadProducts();
+      updateCartCount();
+      checkLogin();
+    </script>
+  </body>
+</html>

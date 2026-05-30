@@ -1,0 +1,197 @@
+<header class="header">
+  <div class="container">
+    <div class="logo">
+      <h1><a href="/pages/index.html">VINTAGE VIBE</a></h1>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Tìm kiếm quần áo..." />
+      <button id="searchBtn" class="search-icon">🔍</button>
+    </div>
+
+    <div class="user-actions">
+      <div
+        class="user-info"
+        id="userInfoSection"
+        style="display: flex; gap: 10px; align-items: center"
+      >
+        <span id="userGreeting" style="font-weight: 600">Chào, Khách</span>
+
+        <a href="/pages/login.html" id="loginLink" class="auth-btn"
+          >Đăng nhập</a
+        >
+        <a
+          href="/pages/login.html?register=1"
+          id="registerLink"
+          class="auth-btn"
+          >Đăng ký</a
+        >
+
+        <span id="adminBadge" class="admin-badge" style="display: none"
+          >👑 ADMIN</span
+        >
+        <a
+          href="/pages/admin.html"
+          id="adminBtn"
+          style="display: none"
+          class="auth-btn admin-btn"
+          >Quản trị</a
+        >
+        <a
+          href="#"
+          id="logoutBtn"
+          style="display: none"
+          class="auth-btn logout-btn"
+          >Đăng xuất</a
+        >
+      </div>
+
+      <div class="cart-icon">
+        <a
+          href="/pages/cart.html"
+          style="position: relative; display: inline-block"
+        >
+          <span style="font-size: 28px">🛒</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* CSS CHO HEADER */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .header {
+    background: #000;
+    color: #fff;
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 99999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+  }
+  .logo a {
+    color: #ff4757;
+    font-size: 28px;
+    font-weight: 900;
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .search-bar {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+    margin: 0 20px;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 10px 40px 10px 20px;
+    border-radius: 50px;
+    border: none;
+    font-size: 14px;
+    outline: none;
+  }
+  .search-icon {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ff4757;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .auth-btn {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    font-size: 13px;
+    transition: 0.3s;
+    white-space: nowrap;
+  }
+  .auth-btn:hover {
+    background: #ff4757;
+  }
+
+  .logout-btn {
+    background: #e74c3c;
+  }
+  .admin-btn {
+    background: #8e44ad;
+  }
+
+  .admin-badge {
+    background: #f1c40f;
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+  }
+
+  .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4757;
+    color: #fff;
+    font-size: 11px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 1px solid #fff;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      flex-wrap: wrap;
+      padding: 10px;
+    }
+    .search-bar {
+      order: 3;
+      width: 100%;
+      max-width: 100%;
+      margin: 10px 0 0 0;
+    }
+    .logo a {
+      font-size: 20px;
+    }
+    .user-info span {
+      display: none;
+    } /* Ẩn chữ Chào trên mobile cho gọn */
+  }
+</style>

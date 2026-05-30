@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thêm sản phẩm mới - Admin Vibe</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      /* CSS GIỮ NGUYÊN GIAO DIỆN CŨ BẠN THÍCH */
+      body {
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        display: flex;
+        background-color: #f5f5f5;
+      }
+      .sidebar {
+        width: 250px;
+        background-color: #222;
+        color: #fff;
+        height: 100vh;
+        position: fixed;
+      }
+      .brand {
+        color: #ff4757;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        padding: 20px 0;
+      }
+      .menu-item {
+        display: block;
+        padding: 15px 20px;
+        color: #ccc;
+        text-decoration: none;
+        border-bottom: 1px solid #333;
+      }
+      .menu-item:hover {
+        background-color: #333;
+        color: #fff;
+      }
+      .menu-item.active {
+        background-color: #ff4757;
+        color: #fff;
+      }
+      .menu-item i {
+        margin-right: 10px;
+        width: 20px;
+      }
+      .main-content {
+        margin-left: 250px;
+        flex: 1;
+        padding: 30px;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+      .form-container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+      }
+      .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+      .form-control:focus {
+        border-color: #ff4757;
+        outline: none;
+      }
+      .row {
+        display: flex;
+        gap: 20px;
+      }
+      .col {
+        flex: 1;
+      }
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+      }
+      .btn-green {
+        background-color: #28a745;
+        color: white;
+      }
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+      #imagePreview {
+        margin-top: 10px;
+        max-width: 200px;
+        display: none;
+        border: 1px dashed #ccc;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="brand">ADMIN VIBE</div>
+      <a href="admin.html" class="menu-item"
+        ><i class="fa-solid fa-chart-line"></i> Thống kê</a
+      >
+      <a href="admin.html" class="menu-item active"
+        ><i class="fa-solid fa-box"></i> Sản phẩm</a
+      >
+      <a href="categories.html" class="menu-item"
+        ><i class="fa-solid fa-layer-group"></i> Danh mục</a
+      >
+      <a href="admin.html" class="menu-item"
+        ><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</a
+      >
+    </div>
+
+    <div class="main-content">
+      <div class="page-header">
+        <h1 class="page-title">Thêm sản phẩm mới</h1>
+        <a href="admin.html" class="btn btn-secondary"
+          ><i class="fa-solid fa-arrow-left"></i> Quay lại</a
+        >
+      </div>
+
+      <div class="form-container">
+        <form id="addProductForm">
+          <div class="form-group">
+            <label class="form-label">Tên sản phẩm (*)</label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              placeholder="Ví dụ: Áo Hoodie Fear Of God"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hình ảnh (Link URL) (*)</label>
+            <input
+              type="text"
+              id="image"
+              class="form-control"
+              placeholder="Dán link ảnh online vào đây..."
+              required
+            />
+            <img id="imagePreview" src="" alt="Preview" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Danh mục sản phẩm (*)</label>
+            <select id="category" class="form-control" required>
+              <option value="">-- Đang tải danh mục... --</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label class="form-label">Giá gốc (VNĐ)</label>
+                <input
+                  type="number"
+                  id="originalPrice"
+                  class="form-control"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label class="form-label">Giá bán (VNĐ) (*)</label>
+                <input
+                  type="number"
+                  id="salePrice"
+                  class="form-control"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Số lượng tồn kho</label>
+            <input type="number" id="stock" class="form-control" value="100" />
+          </div>
+
+          <div class="btn-group">
+            <button type="submit" class="btn btn-green">Lưu sản phẩm</button>
+            <a href="admin.html" class="btn btn-secondary">Hủy bỏ</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // 1. HÀM TẢI DANH MỤC TỪ LOCALSTORAGE
+      function loadCategoriesToSelect() {
+        let cats = JSON.parse(localStorage.getItem("categories"));
+
+        // Nếu chưa có danh mục nào (lần đầu chạy), tạo danh mục mặc định
+        if (!cats || cats.length === 0) {
+          cats = [
+            { name: "🔥 Sản phẩm mới", code: "new" },
+            { name: "⚡ Flash Sale", code: "sale" },
+            { name: "🏆 Bán chạy nhất", code: "best" },
+          ];
+          // Lưu luôn danh mục mặc định này vào LocalStorage để dùng chung
+          localStorage.setItem("categories", JSON.stringify(cats));
+        }
+
+        const select = document.getElementById("category");
+        // Xóa nội dung cũ
+        select.innerHTML = "";
+
+        // Thêm các option mới
+        cats.forEach((c) => {
+          const option = document.createElement("option");
+          option.value = c.code;
+          option.textContent = c.name;
+          select.appendChild(option);
+        });
+      }
+
+      // Gọi hàm load danh mục ngay khi mở trang
+      loadCategoriesToSelect();
+
+      // 2. XỬ LÝ LƯU SẢN PHẨM
+      document
+        .getElementById("addProductForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const image = document.getElementById("image").value;
+          const price = document.getElementById("salePrice").value;
+          const originalPrice = document.getElementById("originalPrice").value;
+          const stock = document.getElementById("stock").value;
+          const category = document.getElementById("category").value;
+
+          const newProduct = {
+            id: Date.now(),
+            name: name,
+            image: image,
+            price: price,
+            original_price: originalPrice,
+            stock_quantity: stock,
+            category: category,
+          };
+
+          let products = JSON.parse(localStorage.getItem("products")) || [];
+          products.push(newProduct);
+          localStorage.setItem("products", JSON.stringify(products));
+
+          alert("Đã lưu sản phẩm thành công!");
+          window.location.href = "admin.html";
+        });
+
+      // 3. XEM TRƯỚC ẢNH
+      document.getElementById("image").addEventListener("input", function () {
+        const preview = document.getElementById("imagePreview");
+        const url = this.value;
+        if (url) {
+          preview.src = url;
+          preview.style.display = "block";
+        } else {
+          preview.style.display = "none";
+        }
+      });
+
+      // Ví dụ hàm xử lý khi form submit
+      async function saveProduct(event) {
+        event.preventDefault(); // Chặn load lại trang
+
+        // Lấy thông tin bạn gõ trên form
+        const newProduct = {
+          name: document.getElementById("productName").value,
+          price: document.getElementById("productPrice").value,
+          image: document.getElementById("productImage").value, // URL hình ảnh
+          description: document.getElementById("productDesc").value,
+        };
+
+        try {
+          // Gửi lên Server MySQL
+          const response = await fetch("/api/products", {
+            // Dùng '/api/products' nếu đã đẩy lên host, hoặc 'http://localhost:3000/api/products' nếu chạy máy tính
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newProduct),
+          });
+
+          if (response.ok) {
+            alert("Đã thêm quần áo thành công vào Database!");
+            window.location.href = "admin.html"; // Quay lại trang admin
+          } else {
+            alert("Có lỗi xảy ra khi thêm.");
+          }
+        } catch (error) {
+          console.error("Lỗi:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

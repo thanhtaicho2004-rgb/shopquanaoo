@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard - Vintage Vibe</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      :root {
+        /* BẢNG MÀU MỚI: TƯƠI SÁNG & SANG TRỌNG */
+        --primary: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+        --primary-solid: #ff4757;
+        --dark: #2d3436;
+        --text-grey: #636e72;
+        --bg-body: #f1f5f9; /* Màu nền xám xanh nhạt rất dịu mắt */
+        --sidebar-bg: #ffffff;
+        --card-bg: #ffffff;
+        --sidebar-width: 280px;
+
+        /* Màu trạng thái pastel */
+        --success-bg: #d1fae5;
+        --success-text: #059669;
+        --warning-bg: #fef3c7;
+        --warning-text: #d97706;
+        --info-bg: #dbeafe;
+        --info-text: #2563eb;
+        --danger-bg: #fee2e2;
+        --danger-text: #dc2626;
+
+        /* Bóng đổ mềm mại (Soft Shadow) */
+        --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        outline: none;
+      }
+      body {
+        display: flex;
+        background: var(--bg-body);
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+        color: var(--dark);
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      .brand,
+      .btn {
+        font-family: "Poppins", sans-serif;
+      }
+
+      /* --- 1. SIDEBAR (TRẮNG TINH KHÔI & SẠCH SẼ) --- */
+      .sidebar {
+        width: var(--sidebar-width);
+        background: var(--sidebar-bg);
+        padding: 30px 20px;
+        position: fixed;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        border-right: 1px solid #e2e8f0; /* Viền mỏng tinh tế */
+      }
+      .brand {
+        font-size: 26px;
+        font-weight: 800;
+        background: var(--primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 50px;
+        letter-spacing: -0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 16px 20px;
+        color: var(--text-grey);
+        text-decoration: none;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 15px;
+      }
+      .menu-item:hover {
+        background: #f8fafc;
+        color: var(--primary-solid);
+        transform: translateX(5px);
+      }
+      .menu-item.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3); /* Bóng đổ cho nút active */
+      }
+      .menu-item i {
+        width: 22px;
+        text-align: center;
+        font-size: 18px;
+      }
+
+      /* --- 2. MAIN CONTENT --- */
+      .main {
+        margin-left: var(--sidebar-width);
+        flex: 1;
+        padding: 40px;
+      }
+      .section {
+        display: none;
+        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .section.active {
+        display: block;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 35px;
+      }
+      .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1e293b;
+        letter-spacing: -1px;
+      }
+
+      /* --- 3. CARDS (HỘP THÔNG TIN) --- */
+      .card {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 20px; /* Bo góc tròn hơn */
+        box-shadow: var(--shadow);
+        border: 1px solid #ffffff;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-bottom: 35px;
+      }
+      .stat-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid white;
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        transition: 0.3s;
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+      }
+      .stat-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        /* Glassmorphism Icon Background */
+        backdrop-filter: blur(10px);
+      }
+      .stat-info h3 {
+        font-size: 36px;
+        font-weight: 700;
+        margin: 0;
+        color: #1e293b;
+        letter-spacing: -1px;
+      }
+      .stat-info p {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-top: 5px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* --- 4. TABLES (BẢNG BIỂU SẠCH SẼ) --- */
+      .table-responsive {
+        overflow-x: auto;
+        border-radius: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 900px;
+      }
+      thead {
+        background: #f8fafc;
+      }
+      th {
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        padding: 20px;
+        text-align: left;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      td {
+        padding: 20px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 15px;
+        vertical-align: middle;
+        color: #334155;
+        font-weight: 500;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      tbody tr:hover td {
+        background: #f8fafc;
+      }
+
+      img.thumb {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      /* --- 5. BUTTONS & BADGES --- */
+      .badge {
+        padding: 8px 14px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .bg-pending {
+        background: var(--warning-bg);
+        color: var(--warning-text);
+      }
+      .bg-shipping {
+        background: var(--info-bg);
+        color: var(--info-text);
+      }
+      .bg-success {
+        background: var(--success-bg);
+        color: var(--success-text);
+      }
+      .bg-cancel {
+        background: var(--danger-bg);
+        color: var(--danger-text);
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(255, 71, 87, 0.4);
+      }
+
+      .action-group {
+        display: flex;
+        gap: 8px;
+      }
+      .btn-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        color: white;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .btn-edit {
+        background: #f59e0b;
+      }
+      .btn-delete {
+        background: #ef4444;
+      }
+      .btn-approve {
+        background: #10b981;
+      }
+      .btn-icon:hover {
+        transform: scale(1.15);
+      }
+
+      /* --- 6. FORM & LAYOUT --- */
+      .cat-layout {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #475569;
+      }
+      .form-control {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: 0.3s;
+        outline: none;
+        background: #f8fafc;
+      }
+      .form-control:focus {
+        border-color: var(--primary-solid);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.1);
+      }
+
+      /* MODAL */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(5px);
+      }
+      .modal-content {
+        background: white;
+        margin: 5% auto;
+        padding: 40px;
+        width: 500px;
+        border-radius: 24px;
+        position: relative;
+        animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .close {
+        position: absolute;
+        right: 25px;
+        top: 25px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #94a3b8;
+        transition: 0.2s;
+      }
+      .close:hover {
+        color: var(--danger-text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="brand"><i class="fa-solid fa-crown"></i> ADMIN VIBE</div>
+
+      <div class="menu-item active" onclick="switchTab('dashboard', this)">
+        <i class="fa-solid fa-chart-pie"></i> Tổng quan
+      </div>
+      <div class="menu-item" onclick="switchTab('products', this)">
+        <i class="fa-solid fa-box-open"></i> Sản phẩm
+      </div>
+      <div class="menu-item" onclick="switchTab('categories', this)">
+        <i class="fa-solid fa-layer-group"></i> Danh mục
+      </div>
+      <div class="menu-item" onclick="switchTab('orders', this)">
+        <i class="fa-solid fa-file-invoice"></i> Đơn hàng
+      </div>
+      <div class="menu-item" onclick="switchTab('reviews', this)">
+        <i class="fa-solid fa-comments"></i> Đánh giá
+      </div>
+
+      <div
+        class="menu-item"
+        onclick="logoutAdmin()"
+        style="margin-top: auto; color: #ef4444; background: #fef2f2"
+      >
+        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+      </div>
+    </div>
+
+    <div class="main">
+      <div id="dashboard" class="section active">
+        <div class="header-row">
+          <div>
+            <h1 class="page-title">Tổng quan kinh doanh</h1>
+            <p style="color: #64748b; margin-top: 5px">
+              Chào mừng quay trở lại, Admin!
+            </p>
+          </div>
+          <div
+            style="
+              background: white;
+              padding: 10px 20px;
+              border-radius: 50px;
+              font-weight: 600;
+              color: var(--primary-solid);
+              box-shadow: var(--shadow);
+            "
+          >
+            <i class="fa-regular fa-calendar"></i> Hôm nay:
+            <span id="currentDate"></span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div
+              class="stat-icon"
+              style="background: var(--success-bg); color: var(--success-text)"
+            >
+              <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="statRevenue">0 ₫</h3>
+              <p>Tổng doanh thu</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div
+              class="stat-icon"
+              style="background: var(--info-bg); color: var(--info-text)"
+            >
+              <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="statOrders">0</h3>
+              <p>Tổng đơn hàng</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div
+              class="stat-icon"
+              style="background: var(--warning-bg); color: var(--warning-text)"
+            >
+              <i class="fa-solid fa-box"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="statProducts">0</h3>
+              <p>Sản phẩm</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px">
+          <div class="card">
+            <h4 style="margin-bottom: 25px; font-size: 18px">
+              Biểu đồ Doanh thu (7 ngày)
+            </h4>
+            <canvas id="revenueChart"></canvas>
+          </div>
+          <div class="card">
+            <h4 style="margin-bottom: 25px; font-size: 18px">Top bán chạy</h4>
+            <canvas id="topProductChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="products" class="section">
+        <div class="header-row">
+          <h1 class="page-title">Kho sản phẩm</h1>
+          <a href="add-product.html" class="btn btn-primary"
+            ><i class="fa-solid fa-plus"></i> Thêm sản phẩm</a
+          >
+        </div>
+        <div class="card table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Hình ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá bán</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="productList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="categories" class="section">
+        <div class="header-row">
+          <h1 class="page-title">Quản lý Danh mục</h1>
+        </div>
+        <div class="cat-layout">
+          <div class="card" style="height: fit-content">
+            <h4 style="margin-bottom: 20px; font-size: 18px">
+              Thêm / Sửa Danh mục
+            </h4>
+            <form id="categoryForm">
+              <input type="hidden" id="catId" />
+              <div class="form-group">
+                <label class="form-label">Tên danh mục</label>
+                <input
+                  type="text"
+                  id="catName"
+                  class="form-control"
+                  placeholder="Ví dụ: Áo Hoodie"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mã (Code)</label>
+                <input
+                  type="text"
+                  id="catCode"
+                  class="form-control"
+                  placeholder="ví dụ: hoodie"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="width: 100%; justify-content: center"
+              >
+                Lưu danh mục
+              </button>
+              <button
+                type="button"
+                onclick="resetCatForm()"
+                class="btn"
+                style="
+                  width: 100%;
+                  justify-content: center;
+                  margin-top: 10px;
+                  background: #f1f5f9;
+                  color: #64748b;
+                "
+              >
+                Hủy bỏ
+              </button>
+            </form>
+          </div>
+          <div class="card table-responsive">
+            <h4 style="margin-bottom: 20px; font-size: 18px">
+              Danh sách hiện có
+            </h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tên</th>
+                  <th>Mã</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="categoryList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="orders" class="section">
+        <div class="header-row">
+          <h1 class="page-title">Quản lý Đơn hàng</h1>
+        </div>
+        <div class="card table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="orderList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="reviews" class="section">
+        <div class="header-row">
+          <h1 class="page-title">Đánh giá & Bình luận</h1>
+        </div>
+        <div class="card table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Khách hàng</th>
+                <th>Nội dung</th>
+                <th>Sao</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="reviewList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 style="margin-bottom: 25px; color: #1e293b">Chỉnh sửa sản phẩm</h2>
+        <form id="editForm">
+          <input type="hidden" id="editId" />
+          <div class="form-group">
+            <label class="form-label">Tên sản phẩm</label
+            ><input type="text" id="editName" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hình ảnh (URL)</label
+            ><input type="text" id="editImage" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giá bán</label
+            ><input
+              type="number"
+              id="editPrice"
+              class="form-control"
+              required
+            />
+          </div>
+          <div style="text-align: right; margin-top: 30px">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="saveEditProduct()"
+            >
+              Lưu thay đổi
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const formatCurrency = (amount) =>
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(amount);
+      document.getElementById("currentDate").innerText =
+        new Date().toLocaleDateString("vi-VN");
+
+      /* ================= 1. SẢN PHẨM ================= */
+      function loadProducts() {
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+        document.getElementById("statProducts").innerText = products.length;
+        const tbody = document.getElementById("productList");
+        if (products.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" style="text-align:center; padding:30px; color:#94a3b8">Kho chưa có sản phẩm nào.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = products
+          .map(
+            (p) => `
+            <tr>
+              <td>#${p.id}</td>
+              <td><img src="${
+                p.image
+              }" class="thumb" onerror="this.src='https://via.placeholder.com/60'"></td>
+              <td style="font-weight:600; color: #334155">${p.name}</td>
+              <td style="color:var(--primary-solid); font-weight:700">${formatCurrency(
+                p.price
+              )}</td>
+              <td>
+                <div class="action-group">
+                    <button class="btn-icon btn-edit" onclick="openEditModal(${
+                      p.id
+                    })"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteProduct(${
+                      p.id
+                    })"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>`
+          )
+          .join("");
+      }
+      function deleteProduct(id) {
+        if (confirm("Xóa sản phẩm này?")) {
+          let p = JSON.parse(localStorage.getItem("products")) || [];
+          localStorage.setItem(
+            "products",
+            JSON.stringify(p.filter((x) => x.id !== id))
+          );
+          loadProducts();
+        }
+      }
+      function openEditModal(id) {
+        const p = JSON.parse(localStorage.getItem("products")).find(
+          (x) => x.id === id
+        );
+        if (p) {
+          document.getElementById("editId").value = p.id;
+          document.getElementById("editName").value = p.name;
+          document.getElementById("editImage").value = p.image;
+          document.getElementById("editPrice").value = p.price;
+          document.getElementById("editModal").style.display = "block";
+        }
+      }
+      function saveEditProduct() {
+        const id = Number(document.getElementById("editId").value);
+        let p = JSON.parse(localStorage.getItem("products"));
+        const idx = p.findIndex((x) => x.id === id);
+        if (idx !== -1) {
+          p[idx].name = document.getElementById("editName").value;
+          p[idx].image = document.getElementById("editImage").value;
+          p[idx].price = document.getElementById("editPrice").value;
+          localStorage.setItem("products", JSON.stringify(p));
+          closeModal();
+          loadProducts();
+        }
+      }
+      function closeModal() {
+        document.getElementById("editModal").style.display = "none";
+      }
+
+      /* ================= 2. DANH MỤC ================= */
+      function loadCategories() {
+        let cats = JSON.parse(localStorage.getItem("categories"));
+        if (!cats || cats.length === 0) {
+          cats = [
+            { id: 1, name: "Sản phẩm mới", code: "new" },
+            { id: 2, name: "Flash Sale", code: "sale" },
+            { id: 3, name: "Bán chạy", code: "best" },
+          ];
+          localStorage.setItem("categories", JSON.stringify(cats));
+        }
+        const tbody = document.getElementById("categoryList");
+        tbody.innerHTML = cats
+          .map(
+            (c) => `
+              <tr>
+                  <td>#${c.id}</td><td style="font-weight:600">${c.name}</td>
+                  <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:6px; font-size:12px; font-family:monospace; color:#ef4444">${c.code}</span></td>
+                  <td>
+                      <div class="action-group">
+                          <button class="btn-icon btn-edit" onclick="editCat(${c.id})"><i class="fa-solid fa-pen"></i></button>
+                          <button class="btn-icon btn-delete" onclick="deleteCat(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                      </div>
+                  </td>
+              </tr>
+          `
+          )
+          .join("");
+      }
+      document
+        .getElementById("categoryForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const id = document.getElementById("catId").value;
+          const name = document.getElementById("catName").value;
+          const code = document.getElementById("catCode").value;
+          let cats = JSON.parse(localStorage.getItem("categories")) || [];
+          if (id) {
+            const idx = cats.findIndex((c) => c.id == id);
+            if (idx !== -1) cats[idx] = { id: Number(id), name, code };
+          } else {
+            if (cats.some((c) => c.code === code)) {
+              alert("Mã code trùng!");
+              return;
+            }
+            cats.push({ id: Date.now(), name, code });
+          }
+          localStorage.setItem("categories", JSON.stringify(cats));
+          resetCatForm();
+          loadCategories();
+        });
+      function deleteCat(id) {
+        if (confirm("Xóa danh mục?")) {
+          let cats = JSON.parse(localStorage.getItem("categories")).filter(
+            (c) => c.id !== id
+          );
+          localStorage.setItem("categories", JSON.stringify(cats));
+          loadCategories();
+        }
+      }
+      function editCat(id) {
+        const c = JSON.parse(localStorage.getItem("categories")).find(
+          (x) => x.id === id
+        );
+        if (c) {
+          document.getElementById("catId").value = c.id;
+          document.getElementById("catName").value = c.name;
+          document.getElementById("catCode").value = c.code;
+        }
+      }
+      function resetCatForm() {
+        document.getElementById("categoryForm").reset();
+        document.getElementById("catId").value = "";
+      }
+
+      /* ================= 3. ĐƠN HÀNG ================= */
+      function loadOrders() {
+        let orders = JSON.parse(localStorage.getItem("orders")) || [];
+        const tbody = document.getElementById("orderList");
+        document.getElementById("statOrders").innerText = orders.length;
+        document.getElementById("statRevenue").innerText = formatCurrency(
+          orders.reduce(
+            (sum, o) => (o.status !== "Đã hủy" ? sum + o.total : sum),
+            0
+          )
+        );
+
+        if (orders.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="6" style="text-align:center; padding:30px; color:#94a3b8">Chưa có đơn hàng nào.</td></tr>';
+          return;
+        }
+        orders.sort((a, b) => b.id - a.id);
+
+        tbody.innerHTML = orders
+          .map((o) => {
+            let cls = "bg-pending";
+            if (o.status === "Đang giao") cls = "bg-shipping";
+            if (o.status === "Hoàn thành") cls = "bg-success";
+            if (o.status === "Đã hủy") cls = "bg-cancel";
+            let acts =
+              o.status === "Đã hủy" || o.status === "Hoàn thành"
+                ? '<span style="color:#94a3b8; font-size:13px"><i class="fa-solid fa-lock"></i> Đã đóng</span>'
+                : `<div class="action-group"><button class="btn-icon btn-approve" title="Duyệt tiếp" onclick="updateOrderStatus('${o.id}','next')"><i class="fa-solid fa-check"></i></button><button class="btn-icon btn-delete" title="Hủy" onclick="updateOrderStatus('${o.id}','cancel')"><i class="fa-solid fa-xmark"></i></button></div>`;
+            return `<tr><td style="font-weight:bold">#${
+              o.id
+            }</td><td><div style="font-weight:600">${
+              o.customer.name
+            }</div><div style="font-size:12px; color:#94a3b8">${
+              o.customer.phone || ""
+            }</div></td><td>${
+              o.date
+            }</td><td style="color:var(--primary-solid); font-weight:700">${formatCurrency(
+              o.total
+            )}</td><td><span class="badge ${cls}">${
+              o.status
+            }</span></td><td>${acts}</td></tr>`;
+          })
+          .join("");
+        renderCharts(orders);
+      }
+      function updateOrderStatus(id, action) {
+        let orders = JSON.parse(localStorage.getItem("orders"));
+        const o = orders.find((x) => x.id == id);
+        if (o) {
+          let newSt = o.status;
+          let msg = "";
+          if (action === "cancel") {
+            if (confirm("Hủy đơn?")) {
+              newSt = "Đã hủy";
+              msg = "đã bị hủy bởi Admin.";
+            } else return;
+          } else if (action === "next") {
+            if (o.status === "Chờ xử lý") {
+              newSt = "Đang giao";
+              msg = "đang được giao.";
+            } else if (o.status === "Đang giao") {
+              newSt = "Hoàn thành";
+              msg = "giao thành công.";
+            }
+          }
+
+          if (newSt !== o.status) {
+            o.status = newSt;
+            let notifs =
+              JSON.parse(localStorage.getItem("notifications")) || [];
+            notifs.unshift({
+              id: Date.now(),
+              to: o.customer.name,
+              message: `Đơn hàng #${o.id} ${msg}`,
+              isRead: false,
+              time: new Date().toLocaleString("vi-VN"),
+            });
+            localStorage.setItem("notifications", JSON.stringify(notifs));
+            localStorage.setItem("orders", JSON.stringify(orders));
+            loadOrders();
+          }
+        }
+      }
+
+      /* ================= 4. ĐÁNH GIÁ ================= */
+      function loadReviews() {
+        let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+        const tbody = document.getElementById("reviewList");
+        if (reviews.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="6" style="text-align:center; padding:30px; color:#94a3b8">Chưa có đánh giá nào.</td></tr>';
+          return;
+        }
+        reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+        tbody.innerHTML = reviews
+          .map((r) => {
+            let stars = "";
+            for (let i = 0; i < 5; i++)
+              stars +=
+                i < r.rating
+                  ? '<i class="fa-solid fa-star" style="color:#f59e0b"></i>'
+                  : '<i class="fa-regular fa-star" style="color:#cbd5e1"></i>';
+            let badge =
+              r.status === "approved"
+                ? '<span class="badge bg-success">Đã hiện</span>'
+                : '<span class="badge bg-pending">Chờ duyệt</span>';
+            let acts = "";
+            if (r.status === "pending")
+              acts += `<button class="btn-icon btn-approve" onclick="approveReview(${r.id})"><i class="fa-solid fa-check"></i></button>`;
+            acts += `<button class="btn-icon btn-delete" onclick="deleteReview(${r.id})"><i class="fa-solid fa-trash"></i></button>`;
+            return `<tr><td style="font-weight:600">${r.productName}</td><td>${r.user}</td><td style="font-style:italic; color:#64748b">"${r.content}"</td><td>${stars}</td><td>${badge}</td><td><div class="action-group">${acts}</div></td></tr>`;
+          })
+          .join("");
+      }
+      function approveReview(id) {
+        let r = JSON.parse(localStorage.getItem("reviews"));
+        r.find((x) => x.id === id).status = "approved";
+        localStorage.setItem("reviews", JSON.stringify(r));
+        loadReviews();
+      }
+      function deleteReview(id) {
+        if (confirm("Xóa đánh giá?")) {
+          let r = JSON.parse(localStorage.getItem("reviews")).filter(
+            (x) => x.id !== id
+          );
+          localStorage.setItem("reviews", JSON.stringify(r));
+          loadReviews();
+        }
+      }
+
+      /* ================= 5. CHARTS ================= */
+      let revChart, prodChart;
+      function renderCharts(orders) {
+        const valid = orders.filter((o) => o.status !== "Đã hủy");
+        const days = [],
+          revs = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const s = d.toLocaleDateString("vi-VN");
+          days.push(s.slice(0, 5));
+          revs.push(
+            valid.reduce(
+              (sum, o) =>
+                (o.date.split(" ")[1] || o.date) === s ? sum + o.total : sum,
+              0
+            )
+          );
+        }
+        const pCount = {};
+        valid.forEach((o) =>
+          o.items.forEach(
+            (i) => (pCount[i.name] = (pCount[i.name] || 0) + i.qty)
+          )
+        );
+        const top = Object.entries(pCount)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+
+        if (revChart) revChart.destroy();
+        if (prodChart) prodChart.destroy();
+
+        // Chart Colors Upgrade
+        const ctx1 = document.getElementById("revenueChart");
+        if (ctx1)
+          revChart = new Chart(ctx1, {
+            type: "bar",
+            data: {
+              labels: days,
+              datasets: [
+                {
+                  label: "Doanh thu",
+                  data: revs,
+                  backgroundColor: "#ff4757",
+                  borderRadius: 8,
+                },
+              ],
+            },
+            options: {
+              plugins: { legend: { display: false } },
+              scales: { y: { grid: { borderDash: [5, 5] } } },
+            },
+          });
+
+        const ctx2 = document.getElementById("topProductChart");
+        if (ctx2 && top.length > 0)
+          prodChart = new Chart(ctx2, {
+            type: "doughnut",
+            data: {
+              labels: top.map((x) => x[0]),
+              datasets: [
+                {
+                  data: top.map((x) => x[1]),
+                  backgroundColor: [
+                    "#3b82f6",
+                    "#10b981",
+                    "#f59e0b",
+                    "#ef4444",
+                    "#8b5cf6",
+                  ],
+                },
+              ],
+            },
+            options: {
+              cutout: "75%",
+              plugins: { legend: { position: "right" } },
+            },
+          });
+      }
+
+      function switchTab(id, el) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(".menu-item")
+          .forEach((m) => m.classList.remove("active"));
+        el.classList.add("active");
+        if (id === "dashboard" || id === "orders") loadOrders();
+        if (id === "products") loadProducts();
+        if (id === "categories") loadCategories();
+        if (id === "reviews") loadReviews();
+      }
+      function logoutAdmin() {
+        if (confirm("Đăng xuất?")) {
+          localStorage.removeItem("currentUser");
+          window.location.href = "login.html";
+        }
+      }
+
+      // INIT
+      loadProducts();
+      loadOrders();
+      loadCategories();
+      loadReviews();
+    </script>
+  </body>
+</html>
