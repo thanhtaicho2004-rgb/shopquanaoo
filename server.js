@@ -150,6 +150,8 @@ app.post("/api/products", (req, res) => {
 });
 
 // CHẠY SERVER
-app.listen(5000, () => {
-  console.log(" Server API đang chạy tại http://localhost:5000");
+// CHẠY SERVER
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server API đang chạy tại Port: ${PORT}`);
 });
