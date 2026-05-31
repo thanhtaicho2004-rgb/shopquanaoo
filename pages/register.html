@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng Ký - Vintage Vibe</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* GIỮ NGUYÊN CSS ĐẸP CỦA TRANG LOGIN */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+      body {
+        background: #f0f2f5;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: linear-gradient(135deg, #1e272e 0%, #111 100%);
+      }
+      .login-card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+      .brand {
+        color: #ff4757;
+        font-size: 28px;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        display: block;
+        text-decoration: none;
+        letter-spacing: 1px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+      .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        transition: 0.3s;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: #ff4757;
+      }
+      .btn-login {
+        width: 100%;
+        padding: 12px;
+        background: #ff4757;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.3s;
+      }
+      .btn-login:hover {
+        background: #ff2e40;
+        transform: translateY(-2px);
+      }
+      .links {
+        margin-top: 20px;
+        font-size: 14px;
+      }
+      .links a {
+        color: #555;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .links a:hover {
+        color: #ff4757;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <a href="index.html" class="brand">Vintage Vibe</a>
+      <h3 style="margin-bottom: 20px">Đăng ký tài khoản</h3>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label class="form-label">Họ và tên</label>
+          <input
+            type="text"
+            id="fullname"
+            class="form-control"
+            placeholder="Ví dụ: Nguyễn Văn A"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tên đăng nhập</label>
+          <input type="text" id="username" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu</label>
+          <input type="password" id="password" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nhập lại mật khẩu</label>
+          <input
+            type="password"
+            id="confirmPass"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-login">ĐĂNG KÝ</button>
+      </form>
+
+      <div class="links">
+        <p>Đã có tài khoản? <a href="login.html">Đăng nhập ngay</a></p>
+        <div
+          style="
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+          "
+        >
+          <a href="index.html"
+            ><i class="fa-solid fa-arrow-left"></i> Về trang chủ</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const fullname = document.getElementById("fullname").value.trim();
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value;
+          const confirmPass = document.getElementById("confirmPass").value;
+
+          // Kiểm tra mật khẩu
+          if (password !== confirmPass) {
+            alert("Mật khẩu nhập lại không khớp!");
+            return;
+          }
+
+          // Lấy danh sách user cũ
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+
+          // Kiểm tra trùng tên
+          if (users.some((u) => u.username === username)) {
+            alert("Tên đăng nhập này đã tồn tại!");
+            return;
+          }
+
+          // Tạo user mới
+          const newUser = { fullname, username, password };
+          users.push(newUser);
+
+          // Lưu lại
+          localStorage.setItem("users", JSON.stringify(users));
+
+          alert("Đăng ký thành công! Hãy đăng nhập ngay.");
+          window.location.href = "login.html";
+        });
+    </script>
+  </body>
+</html>

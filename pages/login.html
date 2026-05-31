@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - Vintage Vibe</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* CSS GIAO DIỆN ĐẸP ĐỒNG BỘ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+      body {
+        background: #f0f2f5;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: linear-gradient(135deg, #1e272e 0%, #111 100%);
+      }
+
+      .login-card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      .brand {
+        color: #ff4757;
+        font-size: 28px;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+        display: block;
+        text-decoration: none;
+        letter-spacing: 1px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+      .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: 0.3s;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: #ff4757;
+        box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.1);
+      }
+
+      .btn-login {
+        width: 100%;
+        padding: 12px;
+        background: #ff4757;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+      }
+      .btn-login:hover {
+        background: #ff2e40;
+        transform: translateY(-2px);
+      }
+
+      .links {
+        margin-top: 20px;
+        font-size: 14px;
+      }
+      .links a {
+        color: #555;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .links a:hover {
+        color: #ff4757;
+        text-decoration: underline;
+      }
+
+      .divider {
+        margin: 20px 0;
+        border-top: 1px solid #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <a href="index.html" class="brand">Vintage Vibe</a>
+      <h3 style="margin-bottom: 20px; color: #333">Đăng nhập</h3>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Tên tài khoản</label>
+          <input
+            type="text"
+            id="username"
+            class="form-control"
+            placeholder="Nhập: admin"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mật khẩu</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Nhập: 123456"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-login">ĐĂNG NHẬP NGAY</button>
+      </form>
+
+      <div class="links">
+        <p>Chưa có tài khoản? <a href="register.html">Đăng ký tại đây</a></p>
+        <div class="divider"></div>
+        <a href="index.html"
+          ><i class="fa-solid fa-arrow-left"></i> Về trang chủ</a
+        >
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // 1. Lấy thông tin nhập vào
+          const user = document.getElementById("username").value.trim();
+          const pass = document.getElementById("password").value.trim();
+
+          // 2. KIỂM TRA TÀI KHOẢN ADMIN (Cứng)
+          if (user === "admin" && pass === "123456") {
+            alert("Xin chào Admin! Đang chuyển hướng...");
+            // Lưu trạng thái đăng nhập
+            localStorage.setItem(
+              "currentUser",
+              JSON.stringify({ name: "Admin", role: "admin" })
+            );
+            // Chuyển sang trang Admin
+            window.location.href = "admin.html";
+            return;
+          }
+
+          // 3. KIỂM TRA TÀI KHOẢN KHÁCH HÀNG (Lấy từ đăng ký)
+          // Lấy danh sách user đã đăng ký từ LocalStorage
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+
+          // Tìm xem có ai trùng khớp không
+          const foundUser = users.find(
+            (u) =>
+              (u.username === user || u.email === user) && u.password === pass
+          );
+
+          if (foundUser) {
+            alert("Đăng nhập thành công!");
+            // Lưu trạng thái đăng nhập
+            localStorage.setItem("currentUser", JSON.stringify(foundUser));
+            // Chuyển về trang chủ
+            window.location.href = "index.html";
+          } else {
+            alert("Sai tài khoản hoặc mật khẩu! (Thử admin / 123456 xem)");
+          }
+        });
+    </script>
+  </body>
+</html>

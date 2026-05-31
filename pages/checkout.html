@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Thanh Toán - Vintage Vibe</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      /* CSS CHUNG */
+
+      * {
+        margin: 0;
+
+        padding: 0;
+
+        box-sizing: border-box;
+
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        background: #f8f9fa;
+
+        padding-top: 80px;
+
+        min-height: 100vh;
+
+        display: flex;
+
+        flex-direction: column;
+      }
+
+      /* HEADER */
+
+      .header {
+        background: #000;
+
+        padding: 15px 0;
+
+        position: fixed;
+
+        top: 0;
+
+        width: 100%;
+
+        z-index: 1000;
+
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .header-inner {
+        max-width: 1200px;
+
+        margin: 0 auto;
+
+        padding: 0 20px;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+      }
+
+      .logo a {
+        color: #ff4757;
+
+        font-size: 24px;
+
+        font-weight: 900;
+
+        text-decoration: none;
+
+        text-transform: uppercase;
+      }
+
+      .back-link {
+        color: #fff;
+
+        text-decoration: none;
+
+        font-size: 14px;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      /* LAYOUT 2 CỘT */
+
+      .container {
+        max-width: 1100px;
+
+        margin: 0 auto;
+
+        padding: 40px 20px;
+
+        display: flex;
+
+        gap: 40px;
+
+        flex-wrap: wrap;
+      }
+
+      /* Cột trái: Form thông tin */
+
+      .col-left {
+        flex: 1.5;
+
+        min-width: 300px;
+      }
+
+      .col-right {
+        flex: 1;
+
+        min-width: 300px;
+      }
+
+      .section-title {
+        font-size: 20px;
+
+        font-weight: 700;
+
+        color: #333;
+
+        margin-bottom: 20px;
+
+        border-bottom: 2px solid #eee;
+
+        padding-bottom: 10px;
+      }
+
+      /* Form Style */
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        font-weight: 600;
+
+        color: #555;
+      }
+
+      .form-control {
+        width: 100%;
+
+        padding: 12px;
+
+        border: 1px solid #ddd;
+
+        border-radius: 6px;
+
+        font-size: 14px;
+
+        transition: 0.3s;
+      }
+
+      .form-control:focus {
+        outline: none;
+
+        border-color: #ff4757;
+
+        background: #fff;
+      }
+
+      /* Cột phải: Tóm tắt đơn hàng */
+
+      .order-summary {
+        background: white;
+
+        padding: 25px;
+
+        border-radius: 10px;
+
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+
+        position: sticky;
+
+        top: 100px;
+      }
+
+      .item-row {
+        display: flex;
+
+        justify-content: space-between;
+
+        margin-bottom: 15px;
+
+        font-size: 14px;
+
+        color: #555;
+
+        border-bottom: 1px dashed #eee;
+
+        padding-bottom: 10px;
+      }
+
+      .item-name {
+        font-weight: 600;
+
+        color: #333;
+
+        flex: 1;
+
+        padding-right: 10px;
+      }
+
+      .total-row {
+        display: flex;
+
+        justify-content: space-between;
+
+        margin-top: 15px;
+
+        font-size: 18px;
+
+        font-weight: 800;
+
+        color: #333;
+
+        border-top: 2px solid #eee;
+
+        padding-top: 15px;
+      }
+
+      .btn-confirm {
+        width: 100%;
+
+        background: #ff4757;
+
+        color: white;
+
+        border: none;
+
+        padding: 15px;
+
+        border-radius: 8px;
+
+        font-size: 16px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        margin-top: 20px;
+
+        transition: 0.3s;
+      }
+
+      .btn-confirm:hover {
+        background: #ff2e40;
+
+        transform: translateY(-3px);
+
+        box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+      }
+
+      /* Responsive */
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column-reverse;
+        } /* Đưa tóm tắt lên trên khi ở mobile */
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo"><a href="index.html">VINTAGE VIBE</a></div>
+
+        <a href="cart.html" class="back-link"
+          ><i class="fa-solid fa-arrow-left"></i> Quay lại giỏ hàng</a
+        >
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="col-left">
+        <div class="section-title">
+          <i class="fa-solid fa-address-card"></i> Thông tin giao hàng
+        </div>
+
+        <form id="checkoutForm">
+          <div class="form-group">
+            <label class="form-label">Họ và tên người nhận (*)</label>
+
+            <input
+              type="text"
+              id="fullname"
+              class="form-control"
+              placeholder="Ví dụ: Nguyễn Văn A"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Số điện thoại (*)</label>
+
+            <input
+              type="text"
+              id="phone"
+              class="form-control"
+              placeholder="Ví dụ: 0909 123 456"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Địa chỉ nhận hàng (*)</label>
+
+            <input
+              type="text"
+              id="address"
+              class="form-control"
+              placeholder="Ví dụ: 180 Cao Lỗ, Quận 8, TP.HCM"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ghi chú thêm (Tùy chọn)</label>
+
+            <textarea
+              id="note"
+              class="form-control"
+              rows="3"
+              placeholder="Ví dụ: Giao hàng giờ hành chính..."
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-right">
+        <div class="order-summary">
+          <div class="section-title">Đơn hàng của bạn</div>
+
+          <div id="orderItems"></div>
+
+          <div class="total-row">
+            <span>Tổng cộng:</span>
+
+            <span style="color: #ff4757" id="totalAmount">0 đ</span>
+          </div>
+
+          <button type="button" class="btn-confirm" onclick="placeOrder()">
+            ĐẶT HÀNG NGAY
+          </button>
+
+          <p
+            style="
+              text-align: center;
+
+              margin-top: 10px;
+
+              font-size: 13px;
+
+              color: #777;
+            "
+          >
+            Thanh toán khi nhận hàng (COD)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 1. Hàm định dạng tiền
+
+      const formatCurrency = (amount) => {
+        return new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+
+          currency: "VND",
+        }).format(amount);
+      };
+
+      // 2. Load thông tin giỏ hàng ra để hiển thị
+
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      let total = 0;
+
+      function loadCheckoutCart() {
+        const container = document.getElementById("orderItems");
+
+        if (cart.length === 0) {
+          alert("Giỏ hàng đang trống!");
+
+          window.location.href = "index.html";
+
+          return;
+        }
+
+        let html = "";
+
+        cart.forEach((item) => {
+          let itemTotal = item.price * item.qty;
+
+          total += itemTotal;
+
+          html += `
+
+                    <div class="item-row">
+
+                        <span class="item-name">${
+                          item.name
+                        } <span style="font-weight:normal">x${
+            item.qty
+          }</span></span>
+
+                        <span>${formatCurrency(itemTotal)}</span>
+
+                    </div>
+
+                `;
+        });
+
+        container.innerHTML = html;
+
+        document.getElementById("totalAmount").innerText =
+          formatCurrency(total);
+      }
+
+      // 3. Tự động điền thông tin nếu đã đăng nhập
+
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+      if (currentUser) {
+        document.getElementById("fullname").value = currentUser.fullname || ""; // Nếu lúc đăng ký có lưu tên
+
+        // document.getElementById('phone').value = currentUser.phone || '';
+      }
+
+      // 4. CHỨC NĂNG ĐẶT HÀNG (QUAN TRỌNG)
+
+      function placeOrder() {
+        // Lấy dữ liệu từ form
+
+        const fullname = document.getElementById("fullname").value.trim();
+
+        const phone = document.getElementById("phone").value.trim();
+
+        const address = document.getElementById("address").value.trim();
+
+        const note = document.getElementById("note").value.trim();
+
+        // Validate (Kiểm tra rỗng)
+
+        if (!fullname || !phone || !address) {
+          alert("Vui lòng điền đầy đủ thông tin nhận hàng!");
+
+          return;
+        }
+
+        // Tạo mã đơn hàng ngẫu nhiên (Ví dụ: #DH123456)
+
+        const orderId = "DH" + Date.now().toString().slice(-6);
+
+        // Tạo đối tượng Đơn hàng
+
+        const newOrder = {
+          id: orderId,
+
+          customer: {
+            name: fullname,
+
+            phone: phone,
+
+            address: address,
+
+            note: note,
+          },
+
+          items: cart, // Lưu lại danh sách hàng đã mua
+
+          total: total,
+
+          status: "Chờ xử lý", // Trạng thái mặc định
+
+          date: new Date().toLocaleString("vi-VN"), // Ngày giờ hiện tại
+        };
+
+        // Lấy danh sách đơn hàng cũ từ LocalStorage (Để Admin xem)
+
+        let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+        orders.unshift(newOrder); // Thêm đơn mới vào đầu danh sách
+
+        localStorage.setItem("orders", JSON.stringify(orders));
+
+        // Xóa giỏ hàng sau khi đặt thành công
+
+        localStorage.removeItem("cart");
+
+        // Thông báo và chuyển trang
+
+        alert(
+          "🎉 ĐẶT HÀNG THÀNH CÔNG!\nCảm ơn bạn đã mua sắm tại Vintage Vibe."
+        );
+
+        window.location.href = "index.html";
+      }
+
+      // Chạy ngay khi mở trang
+
+      loadCheckoutCart();
+    </script>
+  </body>
+</html>
