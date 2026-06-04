@@ -756,6 +756,7 @@
       }
 
       // CHỨC NĂNG XÓA
+      // GỌI API XÓA SẢN PHẨM TRÊN MYSQL (DELETE)
       async function deleteProduct(id) {
         if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi Database?")) {
           try {
@@ -764,23 +765,22 @@
             });
             if (res.ok) {
               alert("Đã xóa sản phẩm thành công!");
-              loadProducts(); // Tải lại danh sách
+              loadProducts(); // Gọi API tải lại danh sách
             } else {
-              alert("Lỗi khi xóa sản phẩm!");
+              alert("Lỗi Backend: Không thể xóa sản phẩm!");
             }
           } catch (error) {
-            console.error("Lỗi:", error);
-            alert("Lỗi kết nối tới Server!");
+            alert("Lỗi kết nối tới API Server!");
           }
         }
       }
 
-      // MỞ BẢNG SỬA VÀ TẢI THÔNG TIN
+      // GỌI API LẤY CHI TIẾT SẢN PHẨM ĐỂ SỬA (GET)
       async function openEditModal(id) {
         try {
           const res = await fetch(`/api/products/${id}`);
-          const p = await res.json();
-          if (p && p.id) {
+          if (res.ok) {
+            const p = await res.json();
             document.getElementById("editId").value = p.id;
             document.getElementById("editName").value = p.name;
             document.getElementById("editImage").value = p.image;
@@ -788,12 +788,11 @@
             document.getElementById("editModal").style.display = "block";
           }
         } catch (error) {
-          console.error("Lỗi:", error);
-          alert("Lỗi tải thông tin sản phẩm!");
+          alert("Lỗi API tải thông tin sản phẩm!");
         }
       }
 
-      // LƯU SAU KHI SỬA
+      // GỌI API CẬP NHẬT SẢN PHẨM LÊN MYSQL (PUT)
       async function saveEditProduct() {
         const id = document.getElementById("editId").value;
         const updatedProduct = {
@@ -810,15 +809,14 @@
           });
 
           if (res.ok) {
-            alert("Cập nhật sản phẩm thành công!");
+            alert("Cập nhật Database thành công!");
             closeModal();
             loadProducts();
           } else {
-            alert("Lỗi khi cập nhật!");
+            alert("Lỗi Backend: Không thể cập nhật!");
           }
         } catch (error) {
-          console.error("Lỗi:", error);
-          alert("Lỗi kết nối tới Server!");
+          alert("Lỗi kết nối tới API Server!");
         }
       }
 

@@ -426,11 +426,11 @@
         document.getElementById("fullname").value = currentUser.fullname || "";
       }
 
-      // 4. CHỨC NĂNG ĐẶT HÀNG (GỬI LÊN MYSQL)
+      // 4. CHỨC NĂNG ĐẶT HÀNG (GỌI API CHUẨN LÊN BACKEND MYSQL)
       async function placeOrder() {
         if (cart.length === 0) {
           alert("Giỏ hàng trống!");
-          return;
+          return (window.location.href = "index.html");
         }
 
         const fullname = document.getElementById("fullname").value.trim();
@@ -439,11 +439,9 @@
         const note = document.getElementById("note").value.trim();
 
         if (!fullname || !phone || !address) {
-          alert("Vui lòng điền đầy đủ Tên, SĐT và Địa chỉ nhận hàng!");
-          return;
+          return alert("Vui lòng điền đầy đủ Tên, SĐT và Địa chỉ nhận hàng!");
         }
 
-        // Tạo dữ liệu gửi lên Database
         const orderData = {
           customer_name: fullname,
           phone: phone,
@@ -453,7 +451,7 @@
         };
 
         try {
-          // Đẩy code lên máy chủ qua API
+          // Gửi dữ liệu đơn hàng lên máy chủ Backend
           const response = await fetch("/api/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -461,23 +459,19 @@
           });
 
           if (response.ok) {
-            // Xóa giỏ hàng trên máy khách khi đặt xong
             localStorage.removeItem("cart");
             alert(
-              "🎉 ĐẶT HÀNG THÀNH CÔNG!\nCảm ơn bạn đã mua sắm tại Vintage Vibe.",
+              "🎉 ĐẶT HÀNG THÀNH CÔNG!\nĐơn hàng đã được lưu vào Database.",
             );
             window.location.href = "thankyou.html";
           } else {
-            alert("Máy chủ từ chối đơn hàng! Hãy kiểm tra lại Database.");
+            alert("Lỗi Backend: Máy chủ từ chối lưu đơn hàng!");
           }
         } catch (error) {
           console.error("Lỗi:", error);
-          alert("Lỗi kết nối mạng, vui lòng thử lại!");
+          alert("Lỗi mạng: Không thể kết nối tới API Backend!");
         }
       }
-
-      // Chạy ngay khi mở trang
-      loadCheckoutCart();
     </script>
   </body>
 </html>

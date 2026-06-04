@@ -388,14 +388,15 @@
       let selectedSize = null; // Biến lưu size đang chọn
 
       // 1. LOAD SẢN PHẨM TỪ MYSQL
+      // 1. GỌI API LẤY CHI TIẾT 1 SẢN PHẨM TỪ MYSQL
       window.onload = async function () {
         const params = new URLSearchParams(window.location.search);
         const id = parseInt(params.get("id"));
 
         try {
-          // Gọi API lấy chi tiết 1 sản phẩm
+          // Gọi API Backend lấy duy nhất 1 sản phẩm
           const res = await fetch(`/api/products/${id}`);
-          if (!res.ok) throw new Error("Lỗi mạng");
+          if (!res.ok) throw new Error("Lỗi API");
 
           currentProduct = await res.json();
 
@@ -406,9 +407,6 @@
             );
             document.getElementById("pImg").src = currentProduct.image;
             document.title = currentProduct.name + " - Vintage Vibe";
-
-            // Ẩn tạm phần review vì chưa làm API reviews
-            document.querySelector(".reviews-box").style.display = "none";
           } else {
             document.querySelector(".container").innerHTML =
               "<h2 style='text-align:center; margin-top:50px'>Sản phẩm không tồn tại!</h2>";
@@ -416,8 +414,11 @@
         } catch (error) {
           console.log("Lỗi:", error);
           document.querySelector(".container").innerHTML =
-            "<h2 style='text-align:center; margin-top:50px; color:red'>Lỗi tải dữ liệu!</h2>";
+            "<h2 style='text-align:center; margin-top:50px; color:red'>Lỗi tải dữ liệu từ Backend!</h2>";
         }
+
+        loadReviews(id);
+        checkReviewPermission(id);
         updateCartCount();
       };
       // 2. CHỌN SIZE
