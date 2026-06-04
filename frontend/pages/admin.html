@@ -717,10 +717,8 @@
         new Date().toLocaleDateString("vi-VN");
 
       /* ================= 1. SẢN PHẨM ================= */
-      // Đổi hàm loadProducts thành async để gọi API
       async function loadProducts() {
         try {
-          // Gọi API lấy dữ liệu từ MySQL thay vì localStorage
           const response = await fetch("/api/products");
           const products = await response.json();
 
@@ -733,7 +731,6 @@
             return;
           }
 
-          // In sản phẩm ra bảng
           tbody.innerHTML = products
             .map(
               (p) => `
@@ -753,11 +750,82 @@
             .join("");
         } catch (error) {
           console.error("Lỗi khi lấy dữ liệu từ MySQL:", error);
-          const tbody = document.getElementById("productList");
-          tbody.innerHTML =
+          document.getElementById("productList").innerHTML =
             '<tr><td colspan="5" style="text-align:center; padding:30px; color:red">Lỗi kết nối máy chủ!</td></tr>';
         }
       }
+
+      // CHỨC NĂNG XÓA
+      async function deleteProduct(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi Database?")) {
+          try {
+            const res = await fetch(`/api/products/${id}`, {
+              method: "DELETE",
+            });
+            if (res.ok) {
+              alert("Đã xóa sản phẩm thành công!");
+              loadProducts(); // Tải lại danh sách
+            } else {
+              alert("Lỗi khi xóa sản phẩm!");
+            }
+          } catch (error) {
+            console.error("Lỗi:", error);
+            alert("Lỗi kết nối tới Server!");
+          }
+        }
+      }
+
+      // MỞ BẢNG SỬA VÀ TẢI THÔNG TIN
+      async function openEditModal(id) {
+        try {
+          const res = await fetch(`/api/products/${id}`);
+          const p = await res.json();
+          if (p && p.id) {
+            document.getElementById("editId").value = p.id;
+            document.getElementById("editName").value = p.name;
+            document.getElementById("editImage").value = p.image;
+            document.getElementById("editPrice").value = p.price;
+            document.getElementById("editModal").style.display = "block";
+          }
+        } catch (error) {
+          console.error("Lỗi:", error);
+          alert("Lỗi tải thông tin sản phẩm!");
+        }
+      }
+
+      // LƯU SAU KHI SỬA
+      async function saveEditProduct() {
+        const id = document.getElementById("editId").value;
+        const updatedProduct = {
+          name: document.getElementById("editName").value,
+          image: document.getElementById("editImage").value,
+          price: document.getElementById("editPrice").value,
+        };
+
+        try {
+          const res = await fetch(`/api/products/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedProduct),
+          });
+
+          if (res.ok) {
+            alert("Cập nhật sản phẩm thành công!");
+            closeModal();
+            loadProducts();
+          } else {
+            alert("Lỗi khi cập nhật!");
+          }
+        } catch (error) {
+          console.error("Lỗi:", error);
+          alert("Lỗi kết nối tới Server!");
+        }
+      }
+
+      function closeModal() {
+        document.getElementById("editModal").style.display = "none";
+      }
+
       /* ================= 2. DANH MỤC ================= */
       function loadCategories() {
         let cats = JSON.parse(localStorage.getItem("categories"));

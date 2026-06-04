@@ -380,84 +380,56 @@
 
     <script>
       // 1. Hàm định dạng tiền
-
       const formatCurrency = (amount) => {
         return new Intl.NumberFormat("vi-VN", {
           style: "currency",
-
           currency: "VND",
         }).format(amount);
       };
 
       // 2. Load thông tin giỏ hàng ra để hiển thị
-
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
       let total = 0;
 
       function loadCheckoutCart() {
         const container = document.getElementById("orderItems");
 
+        // Nếu giỏ trống thì đuổi về trang chủ ngay lập tức
         if (cart.length === 0) {
-          alert("Giỏ hàng đang trống!");
-
+          alert(
+            "Giỏ hàng của bạn đang trống! Vui lòng chọn mua đồ trước khi thanh toán.",
+          );
           window.location.href = "index.html";
-
           return;
         }
 
         let html = "";
-
         cart.forEach((item) => {
           let itemTotal = item.price * item.qty;
-
           total += itemTotal;
-
           html += `
-
-                    <div class="item-row">
-
-                        <span class="item-name">${
-                          item.name
-                        } <span style="font-weight:normal">x${
-                          item.qty
-                        }</span></span>
-
-                        <span>${formatCurrency(itemTotal)}</span>
-
-                    </div>
-
-                `;
+            <div class="item-row">
+                <span class="item-name">${item.name} <span style="font-weight:normal">x${item.qty}</span></span>
+                <span>${formatCurrency(itemTotal)}</span>
+            </div>
+          `;
         });
 
         container.innerHTML = html;
-
         document.getElementById("totalAmount").innerText =
           formatCurrency(total);
       }
 
       // 3. Tự động điền thông tin nếu đã đăng nhập
-
       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
       if (currentUser) {
-        document.getElementById("fullname").value = currentUser.fullname || ""; // Nếu lúc đăng ký có lưu tên
-
-        // document.getElementById('phone').value = currentUser.phone || '';
+        document.getElementById("fullname").value = currentUser.fullname || "";
       }
 
-      // 4. CHỨC NĂNG ĐẶT HÀNG GỬI LÊN MYSQL
-      // 4. CHỨC NĂNG ĐẶT HÀNG GỬI LÊN MYSQL (Đã nâng cấp chống lỗi)
+      // 4. CHỨC NĂNG ĐẶT HÀNG (GỬI LÊN MYSQL)
       async function placeOrder() {
-        // 1. Lấy lại giỏ hàng mới nhất từ bộ nhớ
-        const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
-
-        // 2. CHẶN NGAY NẾU GIỎ HÀNG TRỐNG
-        if (currentCart.length === 0) {
-          alert(
-            "Giỏ hàng của bạn đang trống! Vui lòng chọn mua áo quần trước khi đặt hàng nhé.",
-          );
-          window.location.href = "index.html";
+        if (cart.length === 0) {
+          alert("Giỏ hàng trống!");
           return;
         }
 
@@ -467,29 +439,21 @@
         const note = document.getElementById("note").value.trim();
 
         if (!fullname || !phone || !address) {
-          alert(
-            "Vui lòng điền đầy đủ thông tin nhận hàng (Tên, SĐT, Địa chỉ)!",
-          );
+          alert("Vui lòng điền đầy đủ Tên, SĐT và Địa chỉ nhận hàng!");
           return;
         }
 
-        // 3. Tính lại tổng tiền để gửi lên Server
-        const totalMoney = currentCart.reduce(
-          (sum, item) => sum + item.price * item.qty,
-          0,
-        );
-
-        // 4. Đóng gói dữ liệu
+        // Tạo dữ liệu gửi lên Database
         const orderData = {
           customer_name: fullname,
           phone: phone,
           address: address + (note ? ` (Ghi chú: ${note})` : ""),
-          total_money: totalMoney,
-          cart: currentCart,
+          total_money: total,
+          cart: cart,
         };
 
         try {
-          // 5. Gửi lên Database
+          // Đẩy code lên máy chủ qua API
           const response = await fetch("/api/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -497,19 +461,23 @@
           });
 
           if (response.ok) {
-            localStorage.removeItem("cart"); // Xóa giỏ hàng sau khi đặt thành công
+            // Xóa giỏ hàng trên máy khách khi đặt xong
+            localStorage.removeItem("cart");
             alert(
-              "🎉 ĐẶT HÀNG THÀNH CÔNG!\nĐơn hàng của bạn đã được gửi lên hệ thống.",
+              "🎉 ĐẶT HÀNG THÀNH CÔNG!\nCảm ơn bạn đã mua sắm tại Vintage Vibe.",
             );
             window.location.href = "thankyou.html";
           } else {
-            alert("Lỗi từ máy chủ Cơ sở dữ liệu! Vui lòng thử lại.");
+            alert("Máy chủ từ chối đơn hàng! Hãy kiểm tra lại Database.");
           }
         } catch (error) {
           console.error("Lỗi:", error);
-          alert("Không thể kết nối tới Server!");
+          alert("Lỗi kết nối mạng, vui lòng thử lại!");
         }
       }
+
+      // Chạy ngay khi mở trang
+      loadCheckoutCart();
     </script>
   </body>
 </html>
