@@ -685,11 +685,21 @@
           }
 
           // Lọc danh mục
+          // Lọc danh mục (Đọc từ cột description thay vì category)
           const newItems = products.filter(
-            (p) => p.category === "new" || !p.category,
+            (p) =>
+              p.description === "new" ||
+              p.description === "Danh mục: new" ||
+              !p.description,
           );
-          const saleItems = products.filter((p) => p.category === "sale");
-          const bestItems = products.filter((p) => p.category === "best");
+          const saleItems = products.filter(
+            (p) =>
+              p.description === "sale" || p.description === "Danh mục: sale",
+          );
+          const bestItems = products.filter(
+            (p) =>
+              p.description === "best" || p.description === "Danh mục: best",
+          );
 
           // Hiển thị ra màn hình
           renderProducts("gridHot", newItems);
