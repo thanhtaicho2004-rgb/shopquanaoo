@@ -6,6 +6,7 @@ const path = require("path");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
 // --- GỘP GIAO DIỆN FRONTEND VÀO SERVER ---
 // Cho phép server đọc các file css, js, hình ảnh trong thư mục frontend
 app.use(express.static(path.join(__dirname, "frontend")));
@@ -19,7 +20,7 @@ app.get("/", (req, res) => {
 const db = mysql.createConnection({
   host: "sql12.freesqldatabase.com", // Database Host của bạn
   user: "sql12828734", // Database Username của bạn
-  password: "tAf6zgfMjE", // <--- Thay chữ này bằng mật khẩu bạn sắp nhận được
+  password: "tAf6zgfMjE", // Mật khẩu của bạn
   database: "sql12828734", // Database Name của bạn
 });
 
@@ -50,7 +51,7 @@ app.get("/api/products/:id", (req, res) => {
   );
 });
 
-// 3. ĐĂNG NHẬP (MỚI BỔ SUNG)
+// 3. ĐĂNG NHẬP
 app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
   const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
@@ -84,18 +85,27 @@ app.post("/api/orders", (req, res) => {
     (err, result) => {
       if (err) return res.status(500).json(err);
       const orderId = result.insertId;
-      const items = cart.map((item) => [
-        orderId,
-        item.id,
-        item.qty,
-        item.price,
-      ]);
-      const sqlItems = `INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase) VALUES ?`;
 
-      db.query(sqlItems, [items], (err, resultItems) => {
-        if (err) return res.status(500).json(err);
-        return res.json({ message: "Thành công!", orderId });
-      });
+      // Nếu có sản phẩm trong giỏ thì mới thêm vào order_items
+      if (cart && cart.length > 0) {
+        const items = cart.map((item) => [
+          orderId,
+          item.id,
+          item.qty,
+          item.price,
+        ]);
+        const sqlItems = `INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase) VALUES ?`;
+
+        db.query(sqlItems, [items], (err, resultItems) => {
+          if (err) return res.status(500).json(err);
+          return res.json({ message: "Thành công!", orderId });
+        });
+      } else {
+        return res.json({
+          message: "Thành công nhưng giỏ hàng trống!",
+          orderId,
+        });
+      }
     },
   );
 });
@@ -143,7 +153,10 @@ app.get("/api/admin/stats", (req, res) => {
     });
   });
 });
-// --- API THÊM SẢN PHẨM MỚI (Dành cho Admin) ---
+
+// ================== API QUẢN LÝ SẢN PHẨM ==================
+
+// 8. THÊM SẢN PHẨM MỚI
 app.post("/api/products", (req, res) => {
   const { name, price, image, description } = req.body;
 
@@ -157,7 +170,25 @@ app.post("/api/products", (req, res) => {
   });
 });
 
-// CHẠY SERVER
+// 9. SỬA SẢN PHẨM (MỚI BỔ SUNG ĐỂ FIX LỖI)
+app.put("/api/products/:id", (req, res) => {
+  const { name, image, price } = req.body;
+  const sql = "UPDATE products SET name=?, image=?, price=? WHERE id=?";
+  db.query(sql, [name, image, price, req.params.id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Cập nhật thành công" });
+  });
+});
+
+// 10. XÓA SẢN PHẨM (MỚI BỔ SUNG ĐỂ FIX LỖI)
+app.delete("/api/products/:id", (req, res) => {
+  const sql = "DELETE FROM products WHERE id=?";
+  db.query(sql, [req.params.id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Xóa thành công" });
+  });
+});
+
 // CHẠY SERVER
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
