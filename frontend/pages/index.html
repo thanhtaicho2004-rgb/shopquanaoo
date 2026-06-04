@@ -663,24 +663,43 @@
         setTimeout(() => toast.remove(), 3000);
       }
 
-      // 2. LOAD SẢN PHẨM
-      function loadProducts() {
-        const products = JSON.parse(localStorage.getItem("products")) || [];
-        if (products.length === 0) {
+      // Tạo một biến toàn cục để chứa sản phẩm sau khi tải từ Database về
+      let globalProducts = [];
+
+      // 2. LOAD SẢN PHẨM TỪ MYSQL (Đã sửa thành gọi API)
+      async function loadProducts() {
+        try {
+          // Gọi API lấy dữ liệu từ Server
+          const response = await fetch("/api/products");
+          const products = await response.json();
+
+          // Lưu vào biến toàn cục để dùng cho giỏ hàng
+          globalProducts = products;
+
+          if (products.length === 0) {
+            document.getElementById("gridHot").innerHTML =
+              "<p style='grid-column: span 4; text-align:center'>Chưa có sản phẩm.</p>";
+            document.getElementById("gridSale").innerHTML = "";
+            document.getElementById("gridBest").innerHTML = "";
+            return;
+          }
+
+          // Lọc danh mục
+          const newItems = products.filter(
+            (p) => p.category === "new" || !p.category,
+          );
+          const saleItems = products.filter((p) => p.category === "sale");
+          const bestItems = products.filter((p) => p.category === "best");
+
+          // Hiển thị ra màn hình
+          renderProducts("gridHot", newItems);
+          renderProducts("gridSale", saleItems);
+          renderProducts("gridBest", bestItems);
+        } catch (error) {
+          console.error("Lỗi kết nối máy chủ:", error);
           document.getElementById("gridHot").innerHTML =
-            "<p style='grid-column: span 4; text-align:center'>Chưa có sản phẩm.</p>";
-          document.getElementById("gridSale").innerHTML = "";
-          document.getElementById("gridBest").innerHTML = "";
-          return;
+            "<p style='grid-column: span 4; text-align:center; color:red'>Lỗi tải dữ liệu!</p>";
         }
-        const newItems = products.filter(
-          (p) => p.category === "new" || !p.category,
-        );
-        const saleItems = products.filter((p) => p.category === "sale");
-        const bestItems = products.filter((p) => p.category === "best");
-        renderProducts("gridHot", newItems);
-        renderProducts("gridSale", saleItems);
-        renderProducts("gridBest", bestItems);
       }
 
       function renderProducts(elementId, items) {
@@ -709,10 +728,10 @@
           .join("");
       }
 
-      // 3. GIỎ HÀNG
+      // 3. GIỎ HÀNG (Sửa lại để lấy sản phẩm từ biến globalProducts)
       function addToCart(id) {
-        const products = JSON.parse(localStorage.getItem("products")) || [];
-        const product = products.find((p) => p.id === id);
+        // Tìm sản phẩm trong dữ liệu thật lấy từ Database
+        const product = globalProducts.find((p) => p.id === id);
         if (product) {
           let cart = JSON.parse(localStorage.getItem("cart")) || [];
           let item = cart.find((x) => x.id === id);
@@ -723,13 +742,10 @@
           showToast(`Đã thêm: ${product.name}`);
         }
       }
+
       function updateCartCount() {
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-        // SỬA LỖI TẠI ĐÂY: Dùng .length để đếm số dòng sản phẩm (2 món = số 2)
-        // Thay vì dùng .reduce (cộng tổng số lượng)
         const count = cart.length;
-
         const cartCountEl = document.getElementById("cartCount");
         if (cartCountEl) {
           cartCountEl.innerText = count;

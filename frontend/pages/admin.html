@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -163,7 +163,9 @@
         box-shadow: var(--shadow);
         border: 1px solid #ffffff;
         margin-bottom: 30px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
       .card:hover {
         transform: translateY(-5px);
@@ -715,81 +717,47 @@
         new Date().toLocaleDateString("vi-VN");
 
       /* ================= 1. SẢN PHẨM ================= */
-      function loadProducts() {
-        let products = JSON.parse(localStorage.getItem("products")) || [];
-        document.getElementById("statProducts").innerText = products.length;
-        const tbody = document.getElementById("productList");
-        if (products.length === 0) {
-          tbody.innerHTML =
-            '<tr><td colspan="5" style="text-align:center; padding:30px; color:#94a3b8">Kho chưa có sản phẩm nào.</td></tr>';
-          return;
-        }
+      // Đổi hàm loadProducts thành async để gọi API
+      async function loadProducts() {
+        try {
+          // Gọi API lấy dữ liệu từ MySQL thay vì localStorage
+          const response = await fetch("/api/products");
+          const products = await response.json();
 
-        tbody.innerHTML = products
-          .map(
-            (p) => `
+          document.getElementById("statProducts").innerText = products.length;
+          const tbody = document.getElementById("productList");
+
+          if (products.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="5" style="text-align:center; padding:30px; color:#94a3b8">Kho chưa có sản phẩm nào.</td></tr>';
+            return;
+          }
+
+          // In sản phẩm ra bảng
+          tbody.innerHTML = products
+            .map(
+              (p) => `
             <tr>
               <td>#${p.id}</td>
-              <td><img src="${
-                p.image
-              }" class="thumb" onerror="this.src='https://via.placeholder.com/60'"></td>
+              <td><img src="${p.image}" class="thumb" onerror="this.src='https://via.placeholder.com/60'"></td>
               <td style="font-weight:600; color: #334155">${p.name}</td>
-              <td style="color:var(--primary-solid); font-weight:700">${formatCurrency(
-                p.price
-              )}</td>
+              <td style="color:var(--primary-solid); font-weight:700">${formatCurrency(p.price)}</td>
               <td>
                 <div class="action-group">
-                    <button class="btn-icon btn-edit" onclick="openEditModal(${
-                      p.id
-                    })"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-icon btn-delete" onclick="deleteProduct(${
-                      p.id
-                    })"><i class="fa-solid fa-trash"></i></button>
+                    <button class="btn-icon btn-edit" onclick="openEditModal(${p.id})"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
                 </div>
               </td>
-            </tr>`
-          )
-          .join("");
-      }
-      function deleteProduct(id) {
-        if (confirm("Xóa sản phẩm này?")) {
-          let p = JSON.parse(localStorage.getItem("products")) || [];
-          localStorage.setItem(
-            "products",
-            JSON.stringify(p.filter((x) => x.id !== id))
-          );
-          loadProducts();
+            </tr>`,
+            )
+            .join("");
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu từ MySQL:", error);
+          const tbody = document.getElementById("productList");
+          tbody.innerHTML =
+            '<tr><td colspan="5" style="text-align:center; padding:30px; color:red">Lỗi kết nối máy chủ!</td></tr>';
         }
       }
-      function openEditModal(id) {
-        const p = JSON.parse(localStorage.getItem("products")).find(
-          (x) => x.id === id
-        );
-        if (p) {
-          document.getElementById("editId").value = p.id;
-          document.getElementById("editName").value = p.name;
-          document.getElementById("editImage").value = p.image;
-          document.getElementById("editPrice").value = p.price;
-          document.getElementById("editModal").style.display = "block";
-        }
-      }
-      function saveEditProduct() {
-        const id = Number(document.getElementById("editId").value);
-        let p = JSON.parse(localStorage.getItem("products"));
-        const idx = p.findIndex((x) => x.id === id);
-        if (idx !== -1) {
-          p[idx].name = document.getElementById("editName").value;
-          p[idx].image = document.getElementById("editImage").value;
-          p[idx].price = document.getElementById("editPrice").value;
-          localStorage.setItem("products", JSON.stringify(p));
-          closeModal();
-          loadProducts();
-        }
-      }
-      function closeModal() {
-        document.getElementById("editModal").style.display = "none";
-      }
-
       /* ================= 2. DANH MỤC ================= */
       function loadCategories() {
         let cats = JSON.parse(localStorage.getItem("categories"));
@@ -815,7 +783,7 @@
                       </div>
                   </td>
               </tr>
-          `
+          `,
           )
           .join("");
       }
@@ -844,7 +812,7 @@
       function deleteCat(id) {
         if (confirm("Xóa danh mục?")) {
           let cats = JSON.parse(localStorage.getItem("categories")).filter(
-            (c) => c.id !== id
+            (c) => c.id !== id,
           );
           localStorage.setItem("categories", JSON.stringify(cats));
           loadCategories();
@@ -852,7 +820,7 @@
       }
       function editCat(id) {
         const c = JSON.parse(localStorage.getItem("categories")).find(
-          (x) => x.id === id
+          (x) => x.id === id,
         );
         if (c) {
           document.getElementById("catId").value = c.id;
@@ -873,8 +841,8 @@
         document.getElementById("statRevenue").innerText = formatCurrency(
           orders.reduce(
             (sum, o) => (o.status !== "Đã hủy" ? sum + o.total : sum),
-            0
-          )
+            0,
+          ),
         );
 
         if (orders.length === 0) {
@@ -903,7 +871,7 @@
             }</div></td><td>${
               o.date
             }</td><td style="color:var(--primary-solid); font-weight:700">${formatCurrency(
-              o.total
+              o.total,
             )}</td><td><span class="badge ${cls}">${
               o.status
             }</span></td><td>${acts}</td></tr>`;
@@ -989,7 +957,7 @@
       function deleteReview(id) {
         if (confirm("Xóa đánh giá?")) {
           let r = JSON.parse(localStorage.getItem("reviews")).filter(
-            (x) => x.id !== id
+            (x) => x.id !== id,
           );
           localStorage.setItem("reviews", JSON.stringify(r));
           loadReviews();
@@ -1011,15 +979,15 @@
             valid.reduce(
               (sum, o) =>
                 (o.date.split(" ")[1] || o.date) === s ? sum + o.total : sum,
-              0
-            )
+              0,
+            ),
           );
         }
         const pCount = {};
         valid.forEach((o) =>
           o.items.forEach(
-            (i) => (pCount[i.name] = (pCount[i.name] || 0) + i.qty)
-          )
+            (i) => (pCount[i.name] = (pCount[i.name] || 0) + i.qty),
+          ),
         );
         const top = Object.entries(pCount)
           .sort((a, b) => b[1] - a[1])

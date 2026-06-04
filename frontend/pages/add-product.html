@@ -232,26 +232,19 @@
     </div>
 
     <script>
-      // 1. HÀM TẢI DANH MỤC TỪ LOCALSTORAGE
+      // 1. TẢI DANH MỤC TỪ LOCALSTORAGE (Tạm giữ nguyên)
       function loadCategoriesToSelect() {
         let cats = JSON.parse(localStorage.getItem("categories"));
-
-        // Nếu chưa có danh mục nào (lần đầu chạy), tạo danh mục mặc định
         if (!cats || cats.length === 0) {
           cats = [
             { name: "🔥 Sản phẩm mới", code: "new" },
             { name: "⚡ Flash Sale", code: "sale" },
             { name: "🏆 Bán chạy nhất", code: "best" },
           ];
-          // Lưu luôn danh mục mặc định này vào LocalStorage để dùng chung
           localStorage.setItem("categories", JSON.stringify(cats));
         }
-
         const select = document.getElementById("category");
-        // Xóa nội dung cũ
         select.innerHTML = "";
-
-        // Thêm các option mới
         cats.forEach((c) => {
           const option = document.createElement("option");
           option.value = c.code;
@@ -259,39 +252,41 @@
           select.appendChild(option);
         });
       }
-
-      // Gọi hàm load danh mục ngay khi mở trang
       loadCategoriesToSelect();
 
-      // 2. XỬ LÝ LƯU SẢN PHẨM
+      // 2. XỬ LÝ LƯU SẢN PHẨM VÀO DATABASE MYSQL (Đã sửa lỗi)
       document
         .getElementById("addProductForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
+        .addEventListener("submit", async function (e) {
+          e.preventDefault(); // Chặn load lại trang
 
-          const name = document.getElementById("name").value;
-          const image = document.getElementById("image").value;
-          const price = document.getElementById("salePrice").value;
-          const originalPrice = document.getElementById("originalPrice").value;
-          const stock = document.getElementById("stock").value;
-          const category = document.getElementById("category").value;
-
+          // Lấy thông tin từ các ô input (lấy đúng ID của form)
           const newProduct = {
-            id: Date.now(),
-            name: name,
-            image: image,
-            price: price,
-            original_price: originalPrice,
-            stock_quantity: stock,
-            category: category,
+            name: document.getElementById("name").value,
+            price: document.getElementById("salePrice").value,
+            image: document.getElementById("image").value,
+            description:
+              "Danh mục: " + document.getElementById("category").value,
           };
 
-          let products = JSON.parse(localStorage.getItem("products")) || [];
-          products.push(newProduct);
-          localStorage.setItem("products", JSON.stringify(products));
+          try {
+            // Gửi lên Server MySQL thông qua API
+            const response = await fetch("/api/products", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(newProduct),
+            });
 
-          alert("Đã lưu sản phẩm thành công!");
-          window.location.href = "admin.html";
+            if (response.ok) {
+              alert("Đã thêm quần áo thành công vào Database MySQL!");
+              window.location.href = "admin.html"; // Quay lại trang admin
+            } else {
+              alert("Có lỗi xảy ra khi thêm (Từ chối kết nối).");
+            }
+          } catch (error) {
+            console.error("Lỗi:", error);
+            alert("Lỗi kết nối tới Server!");
+          }
         });
 
       // 3. XEM TRƯỚC ẢNH
@@ -305,38 +300,6 @@
           preview.style.display = "none";
         }
       });
-
-      // Ví dụ hàm xử lý khi form submit
-      async function saveProduct(event) {
-        event.preventDefault(); // Chặn load lại trang
-
-        // Lấy thông tin bạn gõ trên form
-        const newProduct = {
-          name: document.getElementById("productName").value,
-          price: document.getElementById("productPrice").value,
-          image: document.getElementById("productImage").value, // URL hình ảnh
-          description: document.getElementById("productDesc").value,
-        };
-
-        try {
-          // Gửi lên Server MySQL
-          const response = await fetch("/api/products", {
-            // Dùng '/api/products' nếu đã đẩy lên host, hoặc 'http://localhost:3000/api/products' nếu chạy máy tính
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newProduct),
-          });
-
-          if (response.ok) {
-            alert("Đã thêm quần áo thành công vào Database!");
-            window.location.href = "admin.html"; // Quay lại trang admin
-          } else {
-            alert("Có lỗi xảy ra khi thêm.");
-          }
-        } catch (error) {
-          console.error("Lỗi:", error);
-        }
-      }
     </script>
   </body>
 </html>
