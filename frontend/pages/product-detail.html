@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -387,31 +387,39 @@
       let currentProduct = null;
       let selectedSize = null; // Biến lưu size đang chọn
 
-      // 1. LOAD SẢN PHẨM
-      window.onload = function () {
+      // 1. LOAD SẢN PHẨM TỪ MYSQL
+      window.onload = async function () {
         const params = new URLSearchParams(window.location.search);
         const id = parseInt(params.get("id"));
-        const products = JSON.parse(localStorage.getItem("products")) || [];
 
-        currentProduct = products.find((p) => p.id === id);
+        try {
+          // Gọi API lấy chi tiết 1 sản phẩm
+          const res = await fetch(`/api/products/${id}`);
+          if (!res.ok) throw new Error("Lỗi mạng");
 
-        if (currentProduct) {
-          document.getElementById("pName").innerText = currentProduct.name;
-          document.getElementById("pPrice").innerText = formatCurrency(
-            currentProduct.price
-          );
-          document.getElementById("pImg").src = currentProduct.image;
-          document.title = currentProduct.name + " - Vintage Vibe";
+          currentProduct = await res.json();
 
-          loadReviews(id);
-          checkReviewPermission(id);
-        } else {
+          if (currentProduct && currentProduct.id) {
+            document.getElementById("pName").innerText = currentProduct.name;
+            document.getElementById("pPrice").innerText = formatCurrency(
+              currentProduct.price,
+            );
+            document.getElementById("pImg").src = currentProduct.image;
+            document.title = currentProduct.name + " - Vintage Vibe";
+
+            // Ẩn tạm phần review vì chưa làm API reviews
+            document.querySelector(".reviews-box").style.display = "none";
+          } else {
+            document.querySelector(".container").innerHTML =
+              "<h2 style='text-align:center; margin-top:50px'>Sản phẩm không tồn tại!</h2>";
+          }
+        } catch (error) {
+          console.log("Lỗi:", error);
           document.querySelector(".container").innerHTML =
-            "<h2 style='text-align:center; margin-top:50px'>Sản phẩm không tồn tại!</h2>";
+            "<h2 style='text-align:center; margin-top:50px; color:red'>Lỗi tải dữ liệu!</h2>";
         }
         updateCartCount();
       };
-
       // 2. CHỌN SIZE
       function selectSize(btn, size) {
         // Xóa active cũ
@@ -437,7 +445,7 @@
 
         // Kiểm tra xem sản phẩm + size này đã có trong giỏ chưa
         let item = cart.find(
-          (x) => x.id === currentProduct.id && x.size === selectedSize
+          (x) => x.id === currentProduct.id && x.size === selectedSize,
         );
 
         if (item) {
@@ -464,7 +472,7 @@
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         document.getElementById("cartCount").innerText = cart.reduce(
           (sum, item) => sum + item.qty,
-          0
+          0,
         );
       }
 
@@ -473,7 +481,7 @@
         const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
         // Chỉ hiện những review đã được Admin duyệt (status == 'approved')
         const list = reviews.filter(
-          (r) => r.productId === productId && r.status === "approved"
+          (r) => r.productId === productId && r.status === "approved",
         );
 
         const container = document.getElementById("reviewList");
