@@ -447,27 +447,49 @@
       }
 
       // 4. CHỨC NĂNG ĐẶT HÀNG GỬI LÊN MYSQL
+      // 4. CHỨC NĂNG ĐẶT HÀNG GỬI LÊN MYSQL (Đã nâng cấp chống lỗi)
       async function placeOrder() {
+        // 1. Lấy lại giỏ hàng mới nhất từ bộ nhớ
+        const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // 2. CHẶN NGAY NẾU GIỎ HÀNG TRỐNG
+        if (currentCart.length === 0) {
+          alert(
+            "Giỏ hàng của bạn đang trống! Vui lòng chọn mua áo quần trước khi đặt hàng nhé.",
+          );
+          window.location.href = "index.html";
+          return;
+        }
+
         const fullname = document.getElementById("fullname").value.trim();
         const phone = document.getElementById("phone").value.trim();
         const address = document.getElementById("address").value.trim();
         const note = document.getElementById("note").value.trim();
 
         if (!fullname || !phone || !address) {
-          alert("Vui lòng điền đầy đủ thông tin nhận hàng!");
+          alert(
+            "Vui lòng điền đầy đủ thông tin nhận hàng (Tên, SĐT, Địa chỉ)!",
+          );
           return;
         }
 
-        // Tạo dữ liệu gửi lên Server (khớp với API trong server.js)
+        // 3. Tính lại tổng tiền để gửi lên Server
+        const totalMoney = currentCart.reduce(
+          (sum, item) => sum + item.price * item.qty,
+          0,
+        );
+
+        // 4. Đóng gói dữ liệu
         const orderData = {
           customer_name: fullname,
           phone: phone,
           address: address + (note ? ` (Ghi chú: ${note})` : ""),
-          total_money: total,
-          cart: cart, // Gửi kèm mảng giỏ hàng để server lưu chi tiết
+          total_money: totalMoney,
+          cart: currentCart,
         };
 
         try {
+          // 5. Gửi lên Database
           const response = await fetch("/api/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -475,14 +497,13 @@
           });
 
           if (response.ok) {
-            // Đặt hàng thành công
-            localStorage.removeItem("cart"); // Xóa giỏ hàng
+            localStorage.removeItem("cart"); // Xóa giỏ hàng sau khi đặt thành công
             alert(
               "🎉 ĐẶT HÀNG THÀNH CÔNG!\nĐơn hàng của bạn đã được gửi lên hệ thống.",
             );
             window.location.href = "thankyou.html";
           } else {
-            alert("Lỗi khi đặt hàng, vui lòng thử lại!");
+            alert("Lỗi từ máy chủ Cơ sở dữ liệu! Vui lòng thử lại.");
           }
         } catch (error) {
           console.error("Lỗi:", error);
